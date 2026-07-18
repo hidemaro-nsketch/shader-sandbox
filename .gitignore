@@ -16,3 +16,4 @@ todos.json
 .vscode/
 .pi-subagents/
 .claude/logs/
+_run-server.mjs

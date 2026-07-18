@@ -10,7 +10,7 @@ import { MeshBasicNodeMaterial, WebGPURenderer } from "three/webgpu";
 import HalftoneControls, {
 	type HalftoneParamValues,
 } from "../components/HalftoneControls";
-import { buildHalftoneColorNode } from "../util/halftone";
+import { buildHalftoneColorNode, HALFTONE_SHAPES } from "../util/halftone";
 
 const SAMPLE_IMAGE = "/sample-photo.jpg";
 const DEFAULT_PARAMS: HalftoneParamValues = {
@@ -130,7 +130,7 @@ function HalftoneScene({
 			contrast: uniform(params.contrast),
 			brightness: uniform(params.brightness),
 			invert: uniform(params.invert ? 1 : 0),
-			shape: uniform(params.shape === "square" ? 1 : 0),
+			shape: uniform(HALFTONE_SHAPES.indexOf(params.shape)),
 			colorMode: uniform(params.colorMode === "color" ? 1 : 0),
 			tint: uniform(new Color(tr, tg, tb)),
 			bgColor: uniform(new Color(br, bg, bb)),
@@ -145,7 +145,7 @@ function HalftoneScene({
 		uniforms.contrast.value = params.contrast;
 		uniforms.brightness.value = params.brightness;
 		uniforms.invert.value = params.invert ? 1 : 0;
-		uniforms.shape.value = params.shape === "square" ? 1 : 0;
+		uniforms.shape.value = HALFTONE_SHAPES.indexOf(params.shape);
 		uniforms.colorMode.value = params.colorMode === "color" ? 1 : 0;
 		const [tr, tg, tb] = hexToRgb(params.tint);
 		const [br, bg, bb] = hexToRgb(params.bgColor);

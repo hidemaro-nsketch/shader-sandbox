@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, RotateCcw, Upload } from "lucide-react";
 import { type ChangeEvent, type ReactNode, useCallback, useRef } from "react";
+import { HALFTONE_SHAPES, type HalftoneShape } from "../util/halftone";
 
 export interface HalftoneParamValues {
 	cells: number;
@@ -9,7 +10,7 @@ export interface HalftoneParamValues {
 	contrast: number;
 	brightness: number;
 	invert: boolean;
-	shape: "circle" | "square";
+	shape: HalftoneShape;
 	colorMode: "mono" | "color";
 	tint: string;
 	bgColor: string;
@@ -84,6 +85,90 @@ function Segmented<T extends string>(props: {
 						}`}
 					>
 						{opt.label}
+					</button>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function ShapeIcon({ shape }: { shape: HalftoneShape }) {
+	// 24x24 viewBox, shape centered at (12,12) with radius ~8.
+	switch (shape) {
+		case "circle":
+			return <circle cx="12" cy="12" r="8" fill="currentColor" />;
+		case "square":
+			return <rect x="4" y="4" width="16" height="16" fill="currentColor" />;
+		case "diamond":
+			return <path d="M12 3 L21 12 L12 21 L3 12 Z" fill="currentColor" />;
+		case "hexagon":
+			return (
+				<path
+					d="M12 3 L20 7.5 L20 16.5 L12 21 L4 16.5 L4 7.5 Z"
+					fill="currentColor"
+				/>
+			);
+		case "cross":
+			return (
+				<path
+					d="M9 3 H15 V9 H21 V15 H15 V21 H9 V15 H3 V9 H9 Z"
+					fill="currentColor"
+				/>
+			);
+		case "line":
+			return <rect x="3" y="9" width="18" height="6" fill="currentColor" />;
+		case "ring":
+			return (
+				<circle
+					cx="12"
+					cy="12"
+					r="6"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="3"
+				/>
+			);
+		case "triangle":
+			return <path d="M12 4 L20 20 L4 20 Z" fill="currentColor" />;
+		default:
+			return null;
+	}
+}
+
+function ShapeGrid(props: {
+	label: string;
+	value: HalftoneShape;
+	onChange: (v: HalftoneShape) => void;
+}) {
+	const { label, value, onChange } = props;
+	return (
+		<div className="mb-4">
+			<div className="text-xs font-medium text-slate-300 uppercase tracking-wide mb-1.5">
+				{label}
+			</div>
+			<div className="grid grid-cols-4 gap-1.5">
+				{HALFTONE_SHAPES.map((shape) => (
+					<button
+						key={shape}
+						type="button"
+						onClick={() => onChange(shape)}
+						aria-label={shape}
+						aria-pressed={value === shape}
+						className={`flex items-center justify-center aspect-square rounded-lg border transition-all ${
+							value === shape
+								? "bg-cyan-500 text-slate-900 border-cyan-400 shadow"
+								: "bg-slate-950/60 text-slate-400 border-slate-700 hover:text-slate-200 hover:border-slate-600"
+						}`}
+					>
+						<svg
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							role="img"
+							aria-hidden="true"
+						>
+							<ShapeIcon shape={shape} />
+						</svg>
 					</button>
 				))}
 			</div>
@@ -248,13 +333,9 @@ export default function HalftoneControls({
 						onChange={(v) => onChange("angle", v)}
 						format={(v) => `${((v * 180) / Math.PI).toFixed(0)}°`}
 					/>
-					<Segmented
+					<ShapeGrid
 						label="Shape"
 						value={params.shape}
-						options={[
-							{ value: "circle", label: "Circle" },
-							{ value: "square", label: "Square" },
-						]}
 						onChange={(v) => onChange("shape", v)}
 					/>
 				</Section>
