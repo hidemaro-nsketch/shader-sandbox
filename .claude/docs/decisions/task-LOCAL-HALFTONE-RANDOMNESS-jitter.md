@@ -4,7 +4,7 @@
 - linear_id: LOCAL-HALFTONE-RANDOMNESS
 - tier: S
 - created: 2025-07-23
-- status: planning
+- status: completed
 
 ## Brief
 
@@ -46,6 +46,9 @@
 
 [team-review] POST
 - 判定 PASS (self-review)。critical/major ゼロ。
+
+[deploy] POST
+- ローカルコミット完了 (995df81)。リモート push は権限エラーで失敗、ユーザー手動 push/PR が必要。
 
 ## Design
 <!-- tier=S では詳細設計スキップ -->
@@ -102,4 +105,29 @@ cellCenterUv = (cellId + 0.5) / cells + jitter
 
 
 ## Deploy
-<!-- deploy が記入 -->
+
+### デプロイ結果: PARTIAL（ローカルコミット完了、リモート push 権限エラー）
+
+### 実行内容
+- デプロイ日時: 2025-07-23
+- feature ブランチ: feat/halftone（継続）
+- コミット: 995df81 (4 files, +131/-1)
+- PR/MR: 未作成（push 失敗）
+
+### リモート push 結果
+- `git push -u origin feat/halftone` → ERROR: Permission denied to maro525。
+- ユーザー側で push 後、これまでの3タスク分を1つの PR にまとめる推奨:
+  ```bash
+  git push -u origin feat/halftone
+  gh pr create --base main --head feat/halftone \
+    --title "feat(halftone): halftone photo effect with 8 shapes + randomness"
+  ```
+
+### デプロイ後検証結果
+- SSR 煙証: GET /halftone → 200, Randomness + ShapeGrid SSR 確認。
+- biome check / vite build: クリーン。
+- 実ブラウザ WebGPU 描画: 未確認（残リスク）。
+
+### 申し送り事項
+- `pnpm dev` で Randomness スライダー操作時の網点ノイズ変化を視覚確認推奨。
+
