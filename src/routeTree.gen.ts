@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HalftoneRouteImport } from './routes/halftone'
 import { Route as BasicRouteImport } from './routes/basic'
 import { Route as IndexRouteImport } from './routes/index'
 
+const HalftoneRoute = HalftoneRouteImport.update({
+  id: '/halftone',
+  path: '/halftone',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BasicRoute = BasicRouteImport.update({
   id: '/basic',
   path: '/basic',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/basic': typeof BasicRoute
+  '/halftone': typeof HalftoneRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/basic': typeof BasicRoute
+  '/halftone': typeof HalftoneRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/basic': typeof BasicRoute
+  '/halftone': typeof HalftoneRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/basic'
+  fullPaths: '/' | '/basic' | '/halftone'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/basic'
-  id: '__root__' | '/' | '/basic'
+  to: '/' | '/basic' | '/halftone'
+  id: '__root__' | '/' | '/basic' | '/halftone'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BasicRoute: typeof BasicRoute
+  HalftoneRoute: typeof HalftoneRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/halftone': {
+      id: '/halftone'
+      path: '/halftone'
+      fullPath: '/halftone'
+      preLoaderRoute: typeof HalftoneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/basic': {
       id: '/basic'
       path: '/basic'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BasicRoute: BasicRoute,
+  HalftoneRoute: HalftoneRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

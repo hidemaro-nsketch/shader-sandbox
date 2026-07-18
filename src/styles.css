@@ -13,3 +13,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+/* Halftone control panel range sliders */
+.halftone-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: #1e293b;
+  outline: none;
+}
+.halftone-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #22d3ee;
+  cursor: pointer;
+  border: 2px solid #0b1220;
+  box-shadow: 0 0 0 1px #22d3ee;
+}
+.halftone-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #22d3ee;
+  cursor: pointer;
+  border: 2px solid #0b1220;
+}
