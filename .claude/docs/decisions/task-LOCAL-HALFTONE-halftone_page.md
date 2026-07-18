@@ -4,7 +4,7 @@
 - linear_id: LOCAL-HALFTONE
 - tier: M
 - created: 2025-07-23
-- status: planning
+- status: completed
 
 ## Brief
 
@@ -57,6 +57,10 @@
 - 判定 PASS (Quality + Security 並列レビュ、critical/major ゼロ)。
 - SSR 煙証で /halftone 200 レンダリング確認。実ブラウザ WebGPU 描画は残リスク。
 - Linear 未連携のためスキップ。
+
+[deploy] POST
+- ローカルコミット完了 (65cb730)。リモート push は SSH 権限エラーで失敗、ユーザー手動 push/PR が必要。
+- SSR 煙証確認済み。
 
 ## Design
 
@@ -189,4 +193,26 @@ Security (client-only、影響は自己セッションのみ):
 
 
 ## Deploy
-<!-- deploy が記入 -->
+
+### デプロイ結果: PARTIAL（ローカルコミットまで完了、リモート push は権限エラー）
+
+### 実行内容
+- デプロイ日時: 2025-07-23
+- feature ブランチ: feat/halftone
+- コミット: 65cb730 (17 files, +1113/-253)
+- PR/MR: 未作成（push 失敗のため）
+
+### リモート push 結果
+- `git push -u origin feat/halftone` → ERROR: Permission to hidemaro-nsketch/shader-sandbox.git denied to maro525.
+- 原因: 環境の SSH 認証ユーザ (maro525) にリポジトリへの push 権限がない。
+- ユーザー側で push 権限のあるアカウントで `git push -u origin feat/halftone` を実行後、`gh pr create --base main --head feat/halftone --title "feat(halftone): add halftone photo effect page with live GUI controls"` で PR 作成してください。
+
+### デプロイ後検証結果
+- SSR 煙証: preview サーバで GET /halftone → 200, HTML に "Halftone"/"Density"/"sample-photo" 含まれる。GET / → Halftone カード表示。SSR 崩落なし。
+- biome check / vite build: クリーン。
+- 実ブラウザ WebGPU 描画確認: headless 環境のため未実施（残リスク）。
+
+### 申し送り事項
+- ユーザーが `pnpm dev` で /halftone を開き、ハーフトーン描画と GUI パラメータ反映を視覚確認推奨。
+- team-review の minor 指摘（ファイル検証 / ErrorBoundary / テクスチャ dispose / frameloop demand / doc-code 名寄せ）は次タスクで対応推奨。
+
