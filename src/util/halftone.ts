@@ -7,6 +7,7 @@ import {
 	Fn,
 	floor,
 	fract,
+	hash,
 	length,
 	max,
 	min,
@@ -36,6 +37,7 @@ export interface HalftoneUniforms {
 	angle: ShaderNodeObject<UniformNode<number>>;
 	contrast: ShaderNodeObject<UniformNode<number>>;
 	brightness: ShaderNodeObject<UniformNode<number>>;
+	randomness: ShaderNodeObject<UniformNode<number>>;
 	invert: ShaderNodeObject<UniformNode<number>>;
 	shape: ShaderNodeObject<UniformNode<number>>;
 	colorMode: ShaderNodeObject<UniformNode<number>>;
@@ -152,7 +154,18 @@ export function buildHalftoneColorNode(u: HalftoneUniforms) {
 		// Quantize to grid cells.
 		const cell = rot.mul(u.cells).toVar();
 		const cellId = floor(cell).toVar();
-		const cellCenterUv = cellId.add(0.5).div(u.cells).toVar();
+
+		// Per-cell jitter: two independent hashes from cellId produce a
+		// reproducible random offset in [-0.5, 0.5] cells, scaled by the
+		// randomness uniform (0 = aligned grid, 1 = max jitter). Applied to
+		// the sampling position so dots keep their grid slots but sample
+		// the photo from a shaken location → organic halftone noise.
+		const seedX = cellId.x.add(cellId.y.mul(1973.0));
+		const seedY = cellId.x.add(cellId.y.mul(9277.0));
+		const jitter = vec2(hash(seedX).sub(0.5), hash(seedY).sub(0.5))
+			.mul(u.randomness)
+			.div(u.cells);
+		const cellCenterUv = cellId.add(0.5).div(u.cells).add(jitter).toVar();
 
 		// Sample photo at cell center → smooth halftone.
 		const sampled = texture(u.tex, cellCenterUv).rgb.toVar();

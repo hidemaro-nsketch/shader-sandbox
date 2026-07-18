@@ -17,6 +17,7 @@ const DEFAULT_PARAMS: HalftoneParamValues = {
 	cells: 120,
 	dotScale: 1.0,
 	angle: Math.PI / 6,
+	randomness: 0,
 	contrast: 1.0,
 	brightness: 0,
 	invert: false,
@@ -127,6 +128,7 @@ function HalftoneScene({
 			cells: uniform(params.cells),
 			dotScale: uniform(params.dotScale),
 			angle: uniform(params.angle),
+			randomness: uniform(params.randomness),
 			contrast: uniform(params.contrast),
 			brightness: uniform(params.brightness),
 			invert: uniform(params.invert ? 1 : 0),
@@ -142,6 +144,7 @@ function HalftoneScene({
 		uniforms.cells.value = params.cells;
 		uniforms.dotScale.value = params.dotScale;
 		uniforms.angle.value = params.angle;
+		uniforms.randomness.value = params.randomness;
 		uniforms.contrast.value = params.contrast;
 		uniforms.brightness.value = params.brightness;
 		uniforms.invert.value = params.invert ? 1 : 0;
@@ -160,6 +163,7 @@ function HalftoneScene({
 			cells: uniforms.cells,
 			dotScale: uniforms.dotScale,
 			angle: uniforms.angle,
+			randomness: uniforms.randomness,
 			contrast: uniforms.contrast,
 			brightness: uniforms.brightness,
 			invert: uniforms.invert,

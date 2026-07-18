@@ -333,6 +333,14 @@ export default function HalftoneControls({
 						onChange={(v) => onChange("angle", v)}
 						format={(v) => `${((v * 180) / Math.PI).toFixed(0)}°`}
 					/>
+					<Slider
+						label="Randomness"
+						value={params.randomness}
+						min={0}
+						max={1}
+						step={0.01}
+						onChange={(v) => onChange("randomness", v)}
+					/>
 					<ShapeGrid
 						label="Shape"
 						value={params.shape}
