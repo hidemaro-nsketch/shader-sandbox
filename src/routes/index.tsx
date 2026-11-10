@@ -6,8 +6,8 @@ export const Route = createFileRoute("/")({ component: Gallery });
 function Gallery() {
 	return (
 		<div className="min-h-screen bg-white text-black">
-			<main className="mx-auto max-w-6xl px-6 py-14 sm:px-10 sm:py-20">
-				<section className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+			<main className="mx-auto w-full max-w-[1600px] px-6 pt-6 pb-10 sm:px-8 sm:pt-8">
+				<section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
 					{experiments.map((exp) => (
 						<Link
 							key={exp.to}

@@ -8,7 +8,7 @@
  */
 export type Experiment = {
 	/** Route path of the experiment (must exist in `src/routes`). */
-	to: "/basic" | "/halftone" | "/paper-chain" | "/surface-plots";
+	to: "/halftone" | "/paper-chain" | "/surface-plots";
 	title: string;
 	/** Screenshot shown on the gallery card (public/previews). */
 	preview: string;
@@ -17,12 +17,6 @@ export type Experiment = {
 };
 
 export const experiments: readonly Experiment[] = [
-	{
-		to: "/basic",
-		title: "Basic",
-		preview: "/previews/basic.webp",
-		tags: ["tsl", "gradient"],
-	},
 	{
 		to: "/halftone",
 		title: "Halftone",
