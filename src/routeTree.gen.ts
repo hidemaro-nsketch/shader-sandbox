@@ -9,25 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SurfacePlotsRouteImport } from './routes/surface-plots'
-import { Route as PaperChainRouteImport } from './routes/paper-chain'
-import { Route as HalftoneRouteImport } from './routes/halftone'
-import { Route as BasicRouteImport } from './routes/basic'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BasicRouteImport } from './routes/basic'
+import { Route as HalftoneRouteImport } from './routes/halftone'
+import { Route as PaperChainRouteImport } from './routes/paper-chain'
+import { Route as SurfacePlotsRouteImport } from './routes/surface-plots'
 
-const SurfacePlotsRoute = SurfacePlotsRouteImport.update({
-  id: '/surface-plots',
-  path: '/surface-plots',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaperChainRoute = PaperChainRouteImport.update({
-  id: '/paper-chain',
-  path: '/paper-chain',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HalftoneRoute = HalftoneRouteImport.update({
-  id: '/halftone',
-  path: '/halftone',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BasicRoute = BasicRouteImport.update({
@@ -35,9 +25,19 @@ const BasicRoute = BasicRouteImport.update({
   path: '/basic',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const HalftoneRoute = HalftoneRouteImport.update({
+  id: '/halftone',
+  path: '/halftone',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaperChainRoute = PaperChainRouteImport.update({
+  id: '/paper-chain',
+  path: '/paper-chain',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SurfacePlotsRoute = SurfacePlotsRouteImport.update({
+  id: '/surface-plots',
+  path: '/surface-plots',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -87,25 +87,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/surface-plots': {
-      id: '/surface-plots'
-      path: '/surface-plots'
-      fullPath: '/surface-plots'
-      preLoaderRoute: typeof SurfacePlotsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/paper-chain': {
-      id: '/paper-chain'
-      path: '/paper-chain'
-      fullPath: '/paper-chain'
-      preLoaderRoute: typeof PaperChainRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/halftone': {
-      id: '/halftone'
-      path: '/halftone'
-      fullPath: '/halftone'
-      preLoaderRoute: typeof HalftoneRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/basic': {
@@ -115,11 +101,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BasicRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/halftone': {
+      id: '/halftone'
+      path: '/halftone'
+      fullPath: '/halftone'
+      preLoaderRoute: typeof HalftoneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paper-chain': {
+      id: '/paper-chain'
+      path: '/paper-chain'
+      fullPath: '/paper-chain'
+      preLoaderRoute: typeof PaperChainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/surface-plots': {
+      id: '/surface-plots'
+      path: '/surface-plots'
+      fullPath: '/surface-plots'
+      preLoaderRoute: typeof SurfacePlotsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
