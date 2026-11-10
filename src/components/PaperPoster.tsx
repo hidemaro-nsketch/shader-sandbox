@@ -261,11 +261,30 @@ function PatchShape({ patch }: { patch: Patch }) {
 
 function LabelShape({ label }: { label: Label }) {
 	const stroke = "rgba(242, 236, 227, 0.55)";
+	// Mono, 11px with 0.12em tracking ≈ 7.9px per character.
+	const width = label.text.length * 7.9;
+	const padX = 4;
+	const rectX =
+		label.anchor === "start"
+			? label.x - padX
+			: label.anchor === "end"
+				? label.x - width - padX
+				: label.x - width / 2 - padX;
 	return (
 		<g>
 			{label.line && (
 				<LeaderLine line={label.line} arrow={label.arrow} stroke={stroke} />
 			)}
+			{/* Dark plaque keeps labels readable over the colored patches */}
+			<rect
+				x={rectX}
+				y={label.y - 11}
+				width={width + padX * 2}
+				height={15}
+				rx={2}
+				fill={PAPER_PALETTE.bg}
+				opacity={0.82}
+			/>
 			<text
 				x={label.x}
 				y={label.y}
