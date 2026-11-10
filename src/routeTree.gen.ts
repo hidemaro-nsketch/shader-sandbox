@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SurfacePlotsRouteImport } from './routes/surface-plots'
 import { Route as PaperChainRouteImport } from './routes/paper-chain'
 import { Route as HalftoneRouteImport } from './routes/halftone'
 import { Route as BasicRouteImport } from './routes/basic'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SurfacePlotsRoute = SurfacePlotsRouteImport.update({
+  id: '/surface-plots',
+  path: '/surface-plots',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PaperChainRoute = PaperChainRouteImport.update({
   id: '/paper-chain',
   path: '/paper-chain',
@@ -40,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
   '/paper-chain': typeof PaperChainRoute
+  '/surface-plots': typeof SurfacePlotsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
   '/paper-chain': typeof PaperChainRoute
+  '/surface-plots': typeof SurfacePlotsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,20 @@ export interface FileRoutesById {
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
   '/paper-chain': typeof PaperChainRoute
+  '/surface-plots': typeof SurfacePlotsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/basic' | '/halftone' | '/paper-chain'
+  fullPaths: '/' | '/basic' | '/halftone' | '/paper-chain' | '/surface-plots'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/basic' | '/halftone' | '/paper-chain'
-  id: '__root__' | '/' | '/basic' | '/halftone' | '/paper-chain'
+  to: '/' | '/basic' | '/halftone' | '/paper-chain' | '/surface-plots'
+  id:
+    | '__root__'
+    | '/'
+    | '/basic'
+    | '/halftone'
+    | '/paper-chain'
+    | '/surface-plots'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,10 +82,18 @@ export interface RootRouteChildren {
   BasicRoute: typeof BasicRoute
   HalftoneRoute: typeof HalftoneRoute
   PaperChainRoute: typeof PaperChainRoute
+  SurfacePlotsRoute: typeof SurfacePlotsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/surface-plots': {
+      id: '/surface-plots'
+      path: '/surface-plots'
+      fullPath: '/surface-plots'
+      preLoaderRoute: typeof SurfacePlotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/paper-chain': {
       id: '/paper-chain'
       path: '/paper-chain'
@@ -107,6 +130,7 @@ const rootRouteChildren: RootRouteChildren = {
   BasicRoute: BasicRoute,
   HalftoneRoute: HalftoneRoute,
   PaperChainRoute: PaperChainRoute,
+  SurfacePlotsRoute: SurfacePlotsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

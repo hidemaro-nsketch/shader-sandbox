@@ -1,4 +1,10 @@
-import { CircleDot, Link2, type LucideIcon, Sparkles } from "lucide-react";
+import {
+	ChartLine,
+	CircleDot,
+	Link2,
+	type LucideIcon,
+	Sparkles,
+} from "lucide-react";
 
 /**
  * Registry of visual experiments shown on the home gallery.
@@ -9,7 +15,7 @@ import { CircleDot, Link2, type LucideIcon, Sparkles } from "lucide-react";
  */
 export type Experiment = {
 	/** Route path of the experiment (must exist in `src/routes`). */
-	to: "/basic" | "/halftone" | "/paper-chain";
+	to: "/basic" | "/halftone" | "/paper-chain" | "/surface-plots";
 	title: string;
 	/** One or two sentences describing what the visual does. */
 	description: string;
@@ -47,5 +53,14 @@ export const experiments: readonly Experiment[] = [
 		tags: ["poster", "generative", "svg"],
 		icon: Link2,
 		accent: "from-orange-500/20 to-amber-500/5",
+	},
+	{
+		to: "/surface-plots",
+		title: "Surface Plots",
+		description:
+			"Axonometric wireframe terrains with a mint projection wall — years × countries × value, styled like a dark data-viz poster.",
+		tags: ["data-viz", "wireframe", "svg"],
+		icon: ChartLine,
+		accent: "from-emerald-500/20 to-teal-500/5",
 	},
 ];
