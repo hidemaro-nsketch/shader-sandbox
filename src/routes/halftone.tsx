@@ -1,15 +1,15 @@
 import "../util/webgpu-polyfill";
 
-import { OrthographicCamera } from "@react-three/drei";
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Color, TextureLoader } from "three";
 import { uniform } from "three/tsl";
-import { MeshBasicNodeMaterial, WebGPURenderer } from "three/webgpu";
+import { MeshBasicNodeMaterial } from "three/webgpu";
 import HalftoneControls, {
 	type HalftoneParamValues,
 } from "../components/HalftoneControls";
+import { ShaderCanvas } from "../components/ShaderCanvas";
 import { buildHalftoneColorNode, HALFTONE_SHAPES } from "../util/halftone";
 
 const SAMPLE_IMAGE = "/sample-photo.jpg";
@@ -75,28 +75,10 @@ function HalftonePage() {
 	}, []);
 
 	return (
-		<div className="w-screen h-screen flex bg-slate-950 overflow-hidden">
-			<div className="flex-1 relative">
-				<Suspense fallback={null}>
-					<Canvas
-						gl={async (props) => {
-							const renderer = new WebGPURenderer({
-								...props,
-								forceWebGL: !navigator.gpu,
-								antialias: true,
-							});
-							await renderer.init();
-							return renderer;
-						}}
-						style={{ pointerEvents: "none" }}
-					>
-						<OrthographicCamera makeDefault position={[0, 0, 1]} />
-						<Suspense fallback={null}>
-							<HalftoneScene imageUrl={imageUrl} params={params} />
-						</Suspense>
-					</Canvas>
-				</Suspense>
-			</div>
+		<div className="flex h-screen w-screen overflow-hidden bg-slate-950">
+			<ShaderCanvas className="min-w-0 flex-1">
+				<HalftoneScene imageUrl={imageUrl} params={params} />
+			</ShaderCanvas>
 			<HalftoneControls
 				params={params}
 				onChange={handleChange}

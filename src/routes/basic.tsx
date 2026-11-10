@@ -1,12 +1,10 @@
-import "../util/webgpu-polyfill";
-
-import { OrthographicCamera } from "@react-three/drei";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense, useMemo } from "react";
+import { useMemo } from "react";
 import { Fn, screenSize, sin, uniform, vec3 } from "three/tsl";
-import { MeshBasicNodeMaterial, WebGPURenderer } from "three/webgpu";
+import { MeshBasicNodeMaterial } from "three/webgpu";
 
+import { ShaderCanvas } from "../components/ShaderCanvas";
 import { screenAspectUV } from "../util/shader";
 
 const Scene = () => {
@@ -54,29 +52,10 @@ export const Route = createFileRoute("/basic")({
 
 function BasicShaderPage() {
 	return (
-		<div className="w-screen h-screen p-12 bg-slate-900 relative">
-			<Suspense fallback={null}>
-				<Canvas
-					gl={async (props) => {
-						const renderer = new WebGPURenderer({
-							...props,
-							forceWebGL: !navigator.gpu,
-							antialias: true,
-						});
-						await renderer.init();
-						return renderer;
-					}}
-					style={{
-						pointerEvents: "none",
-						borderRadius: 16,
-					}}
-				>
-					<ambientLight intensity={0.5} />
-					<directionalLight position={[5, 5, 5]} intensity={1.0} />
-					<OrthographicCamera makeDefault position={[0, 0, 1]} />
-					<Scene />
-				</Canvas>
-			</Suspense>
-		</div>
+		<main className="h-screen w-screen bg-slate-900 p-12">
+			<ShaderCanvas className="rounded-2xl">
+				<Scene />
+			</ShaderCanvas>
+		</main>
 	);
 }

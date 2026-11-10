@@ -1,9 +1,7 @@
-import type { ShaderNodeObject, UniformNode } from "three/tsl";
 import { screenUV, vec2 } from "three/tsl";
+import type { Node } from "three/webgpu";
 
-export const screenAspectUV = (
-	screenSize: ShaderNodeObject<UniformNode<number>>,
-) => {
+export const screenAspectUV = (screenSize: Node) => {
 	const uv = screenUV.toVar();
 	const aspect = screenSize.x.div(screenSize.y);
 	uv.x.mulAssign(aspect);

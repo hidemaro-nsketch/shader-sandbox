@@ -7,6 +7,7 @@ export interface HalftoneParamValues {
 	cells: number;
 	dotScale: number;
 	angle: number;
+	randomness: number;
 	contrast: number;
 	brightness: number;
 	invert: boolean;

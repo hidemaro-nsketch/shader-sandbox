@@ -1,4 +1,4 @@
-import type { Color } from "three";
+import type { Color, Texture } from "three";
 import {
 	abs,
 	cos,
@@ -13,36 +13,34 @@ import {
 	min,
 	mix,
 	oneMinus,
-	type ShaderNodeObject,
 	select,
 	sin,
 	step,
-	type Texture,
 	texture,
-	type UniformNode,
 	uv,
 	vec2,
 	vec3,
 	vec4,
 } from "three/tsl";
+import type { Node, UniformNode } from "three/webgpu";
 
 /**
  * Halftone uniforms. Each field is a TSL uniform whose `.value` is mutated
  * in-place by the React layer, so the shader updates live without rebuilds.
  */
 export interface HalftoneUniforms {
-	tex: ShaderNodeObject<Texture>;
-	cells: ShaderNodeObject<UniformNode<number>>;
-	dotScale: ShaderNodeObject<UniformNode<number>>;
-	angle: ShaderNodeObject<UniformNode<number>>;
-	contrast: ShaderNodeObject<UniformNode<number>>;
-	brightness: ShaderNodeObject<UniformNode<number>>;
-	randomness: ShaderNodeObject<UniformNode<number>>;
-	invert: ShaderNodeObject<UniformNode<number>>;
-	shape: ShaderNodeObject<UniformNode<number>>;
-	colorMode: ShaderNodeObject<UniformNode<number>>;
-	tint: ShaderNodeObject<UniformNode<Color>>;
-	bgColor: ShaderNodeObject<UniformNode<Color>>;
+	tex: Texture;
+	cells: UniformNode<number>;
+	dotScale: UniformNode<number>;
+	angle: UniformNode<number>;
+	contrast: UniformNode<number>;
+	brightness: UniformNode<number>;
+	randomness: UniformNode<number>;
+	invert: UniformNode<number>;
+	shape: UniformNode<number>;
+	colorMode: UniformNode<number>;
+	tint: UniformNode<Color>;
+	bgColor: UniformNode<Color>;
 }
 
 /** Shape index → name mapping (shared SSoT for GUI + page). */
@@ -79,10 +77,7 @@ const LUM_COEF = vec3(0.299, 0.587, 0.114);
  *  6 ring     — |length(p) - 0.3| (annulus, thickness scales)
  *  7 triangle — max of 3 edge forms, normalized to 0.5 at the edges
  */
-function shapeDistance(
-	p: ShaderNodeObject<UniformNode<number>>,
-	shape: number,
-) {
+function shapeDistance(p: Node, shape: Node) {
 	const px = p.x.toVar();
 	const py = p.y.toVar();
 

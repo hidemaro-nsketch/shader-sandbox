@@ -12,7 +12,11 @@ export const Route = createRootRoute({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: "Shader Sandbox",
+			},
+			{
+				name: "description",
+				content: "A playground for generative visuals built with Three.js TSL.",
 			},
 		],
 		links: [

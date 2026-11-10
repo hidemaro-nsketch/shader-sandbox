@@ -1,204 +1,74 @@
-Welcome to your new TanStack Start app! 
+# Shader Sandbox
 
-# Getting Started
+Three.js の TSL (Three Shading Language) でいろいろなビジュアル生成を試すためのプレイグラウンド。
+各実験は 1 ルート = 1 ページで、トップページのギャラリーから開ける。
 
-To run this application:
+- TanStack Start (React 19 + ファイルベースルーティング)
+- Three.js `WebGPURenderer` + TSL（WebGPU 非対応ブラウザでは自動で WebGL バックエンド）
+- Tailwind CSS 4 / Biome / TypeScript
+
+## 実行
 
 ```bash
 pnpm install
-pnpm dev
-```
-
-# Building For Production
-
-To build this application for production:
-
-```bash
+pnpm dev        # http://localhost:3000
+pnpm check      # Biome の lint + format
+pnpm typecheck  # tsc --noEmit
 pnpm build
 ```
 
-## Testing
+## 実験一覧
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+| ルート | 内容 |
+| --- | --- |
+| `/basic` | TSL の UV グラデーション + 時間アニメ（最小サンプル） |
+| `/halftone` | 写真のハーフトーン（網点）化。密度・形状・角度・色モードをライブ調整、画像アップロード可 |
 
-```bash
-pnpm test
+## 構成
+
+```
+src/
+  experiments.ts              # 実験の登録簿（SSoT: ギャラリー表示に使う）
+  routes/
+    index.tsx                 # ギャラリー（experiments.ts から自動生成）
+    basic.tsx, halftone.tsx   # 各実験ページ
+  components/
+    ShaderCanvas.tsx          # 共通キャンバス（レンダラ初期化・正射影カメラ・戻るリンク）
+    HalftoneControls.tsx      # ハーフトーンのパラメータパネル
+  util/
+    halftone.ts               # ハーフトーンの TSL ノードグラフ
+    shader.ts                 # TSL の小道具（アスペクト補正 UV など）
+    webgpu-polyfill.ts        # WebGPU 非対応環境向けポリフィル（必ず最初に import）
+public/                       # 実験で使う画像などの素材
 ```
 
-## Styling
+## 新しい実験を追加する
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+1. `src/routes/<name>.tsx` を作り、`createFileRoute("/<name>")` でページを書く
+   （`pnpm dev` 中なら `src/routeTree.gen.ts` は自動更新される）
+2. シーンを `<ShaderCanvas>` の中に置く — レンダラの初期化・カメラ・Suspense は共通化済み
 
-### Removing Tailwind CSS
+   ```tsx
+   import { createFileRoute } from "@tanstack/react-router";
+   import { ShaderCanvas } from "../components/ShaderCanvas";
 
-If you prefer not to use Tailwind CSS:
+   export const Route = createFileRoute("/waves")({
+     component: () => (
+       <main className="h-screen w-screen bg-slate-900 p-12">
+         <ShaderCanvas className="rounded-2xl">{/* シーン */}</ShaderCanvas>
+       </main>
+     ),
+   });
+   ```
 
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `pnpm add @tailwindcss/vite tailwindcss --dev`
+3. `src/experiments.ts` に 1 エントリ追加（タイトル・説明・タグ・アイコン・アクセント色）。
+   ギャラリーはこの配列から生成される
 
-## Linting & Formatting
+## シェーダーの書き方メモ
 
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
-
-
-```bash
-pnpm lint
-pnpm format
-pnpm check
-```
-
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+- マテリアルは `MeshBasicNodeMaterial` に `colorNode` を差して使う
+- パラメータは `uniform()` で作り、`useMemo` で 1 回だけノードグラフを構築 →
+  変更時は `uniform.value` を書き換える（ノード再構築を避けてリアルタイムに反映）
+- 連続描画させたい場合は `useFrame(() => {})` を置く
+- `three/webgpu` / `three/tsl` を import する前に `util/webgpu-polyfill.ts` を評価しておく必要があるが、
+  `<ShaderCanvas>` 経由ならその辺は面倒を見てくれる（自前でレンダラを作る場合のみ先頭で import）
