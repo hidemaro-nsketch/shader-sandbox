@@ -85,8 +85,8 @@ function Gallery() {
 								with <code className="text-cyan-300">createFileRoute</code>
 							</li>
 							<li>
-								Render your scene inside{" "}
-								<code className="text-cyan-300">&lt;ShaderCanvas&gt;</code>
+								<code className="text-cyan-300">&lt;ShaderCanvas&gt;</code> for
+								shader scenes, or any DOM/SVG for graphic experiments
 							</li>
 							<li>
 								Register it in{" "}

@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PaperChainRouteImport } from './routes/paper-chain'
 import { Route as HalftoneRouteImport } from './routes/halftone'
 import { Route as BasicRouteImport } from './routes/basic'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PaperChainRoute = PaperChainRouteImport.update({
+  id: '/paper-chain',
+  path: '/paper-chain',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HalftoneRoute = HalftoneRouteImport.update({
   id: '/halftone',
   path: '/halftone',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
+  '/paper-chain': typeof PaperChainRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
+  '/paper-chain': typeof PaperChainRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
+  '/paper-chain': typeof PaperChainRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/basic' | '/halftone'
+  fullPaths: '/' | '/basic' | '/halftone' | '/paper-chain'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/basic' | '/halftone'
-  id: '__root__' | '/' | '/basic' | '/halftone'
+  to: '/' | '/basic' | '/halftone' | '/paper-chain'
+  id: '__root__' | '/' | '/basic' | '/halftone' | '/paper-chain'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BasicRoute: typeof BasicRoute
   HalftoneRoute: typeof HalftoneRoute
+  PaperChainRoute: typeof PaperChainRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/paper-chain': {
+      id: '/paper-chain'
+      path: '/paper-chain'
+      fullPath: '/paper-chain'
+      preLoaderRoute: typeof PaperChainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/halftone': {
       id: '/halftone'
       path: '/halftone'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BasicRoute: BasicRoute,
   HalftoneRoute: HalftoneRoute,
+  PaperChainRoute: PaperChainRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

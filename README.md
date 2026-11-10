@@ -23,6 +23,7 @@ pnpm build
 | --- | --- |
 | `/basic` | TSL の UV グラデーション + 時間アニメ（最小サンプル） |
 | `/halftone` | 写真のハーフトーン（網点）化。密度・形状・角度・色モードをライブ調整、画像アップロード可 |
+| `/paper-chain` | 切り絵風の人間チェーン・ポスター生成。シードごとに図形・ピクセルパッチ・注釈ラベルが変わる（PNG 書き出し可） |
 
 ## 構成
 
@@ -32,11 +33,14 @@ src/
   routes/
     index.tsx                 # ギャラリー（experiments.ts から自動生成）
     basic.tsx, halftone.tsx   # 各実験ページ
+    paper-chain.tsx           # 切り絵ポスター生成ページ
   components/
     ShaderCanvas.tsx          # 共通キャンバス（レンダラ初期化・正射影カメラ・戻るリンク）
     HalftoneControls.tsx      # ハーフトーンのパラメータパネル
+    PaperPoster.tsx           # 切り絵ポスターの SVG レンダラ
   util/
     halftone.ts               # ハーフトーンの TSL ノードグラフ
+    paperPoster.ts            # ポスターのレイアウト生成（シード RNG）
     shader.ts                 # TSL の小道具（アスペクト補正 UV など）
     webgpu-polyfill.ts        # WebGPU 非対応環境向けポリフィル（必ず最初に import）
 public/                       # 実験で使う画像などの素材
