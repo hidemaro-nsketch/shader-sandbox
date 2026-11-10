@@ -17,6 +17,31 @@ pnpm typecheck  # tsc --noEmit
 pnpm build
 ```
 
+## デプロイ (Vercel)
+
+GitHub（`hidemaro-nsketch/shader-sandbox`）を Vercel に import すればそのまま動く。
+ビルド時に `VERCEL=1` が入ると nitro が `vercel` プリセットに切り替わり、`.vercel/output`（Build Output API v3）を出力する。
+
+ダッシュボードから:
+
+1. Vercel → Add New… → Project → `shader-sandbox` を import
+2. Project Name を `hidemaro-4605` に（Framework Preset は `vercel.json` で Other に固定済み）
+3. Deploy
+
+CLI から:
+
+```bash
+npx vercel login
+npx vercel link --project hidemaro-4605
+npx vercel --prod
+```
+
+ローカルで Vercel 向けのビルドを確認するとき:
+
+```bash
+VERCEL=1 pnpm build   # .vercel/output が生成される
+```
+
 ## 実験一覧
 
 | ルート | 内容 |
