@@ -8,7 +8,7 @@
  */
 export type Experiment = {
 	/** Route path of the experiment (must exist in `src/routes`). */
-	to: "/halftone" | "/paper-chain" | "/surface-plots";
+	to: "/halftone" | "/paper-chain" | "/surface-plots" | "/wireframe";
 	title: string;
 	/** Screenshot shown on the gallery card (public/previews). */
 	preview: string;
@@ -34,5 +34,11 @@ export const experiments: readonly Experiment[] = [
 		title: "Surface Plots",
 		preview: "/previews/surface-plots.webp",
 		tags: ["data-viz", "wireframe"],
+	},
+	{
+		to: "/wireframe",
+		title: "Wireframe Torus",
+		preview: "/previews/wireframe.webp",
+		tags: ["cad", "3d"],
 	},
 ];

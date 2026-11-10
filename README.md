@@ -50,6 +50,7 @@ VERCEL=1 pnpm build   # .vercel/output が生成される
 | `/halftone` | 写真のハーフトーン（網点）化。密度・形状・角度・色モードをライブ調整、画像アップロード可 |
 | `/paper-chain` | 切り絵風の人間チェーン・ポスター生成。シードごとに図形・ピクセルパッチ・注釈ラベルが変わる（PNG 書き出し可） |
 | `/surface-plots` | ワイヤーフレームの3Dサーフェス（年 × 国 × 値）を並べたデータビズ風ポスター。ミント色の投影ウォール付き（PNG 書き出し可） |
+| `/wireframe` | CAD風のワイヤーフレーム・トーラス。透過ハウジング、床グリッド、mm寸法線、発光するハブパーツ |
 
 ## 構成
 
@@ -61,15 +62,18 @@ src/
     basic.tsx, halftone.tsx   # 各実験ページ
     paper-chain.tsx           # 切り絵ポスター生成ページ
     surface-plots.tsx         # サーフェスプロットポスター生成ページ
+    wireframe.tsx             # CAD風ワイヤーフレームページ
   components/
     ShaderCanvas.tsx          # 共通キャンバス（レンダラ初期化・正射影カメラ・戻るリンク）
     HalftoneControls.tsx      # ハーフトーンのパラメータパネル
     PaperPoster.tsx           # 切り絵ポスターの SVG レンダラ
     SurfacePlotPoster.tsx     # サーフェスプロットポスターの SVG レンダラ
+    WireframeTorus.tsx        # CAD風ワイヤーフレームの SVG レンダラ
   util/
     halftone.ts               # ハーフトーンの TSL ノードグラフ
     paperPoster.ts            # ポスターのレイアウト生成（シード RNG）
     surfacePlots.ts           # 地形データ生成 + 斜投影の計算
+    wireframeTorus.ts         # トーラス/シリンダのワイヤー生成と透視投影
     shader.ts                 # TSL の小道具（アスペクト補正 UV など）
     webgpu-polyfill.ts        # WebGPU 非対応環境向けポリフィル（必ず最初に import）
 public/                       # 実験で使う画像などの素材
