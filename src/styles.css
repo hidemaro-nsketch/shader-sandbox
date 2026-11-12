@@ -1,20 +1,5 @@
 @import "tailwindcss";
 
-body {
-  @apply m-0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
-
-/* Gothic (grotesque) face used by the gallery — self-hosted variable cut */
 @font-face {
   font-family: "Space Grotesk";
   font-style: normal;
@@ -23,36 +8,48 @@ code {
   src: url("/fonts/space-grotesk-latin.woff2") format("woff2");
 }
 
+body {
+  @apply m-0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .font-gothic {
   font-family: "Space Grotesk", "Franklin Gothic Medium", "Helvetica Neue",
     Helvetica, Arial, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
 }
 
-/* Halftone control panel range sliders */
-.halftone-range {
+/* Solid black slider: hairline track, square thumb */
+.ui-range {
   -webkit-appearance: none;
   appearance: none;
-  height: 4px;
-  border-radius: 9999px;
-  background: #1e293b;
+  width: 100%;
+  height: 12px;
+  background: transparent;
   outline: none;
+  cursor: pointer;
 }
-.halftone-range::-webkit-slider-thumb {
+.ui-range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: currentColor;
+}
+.ui-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 9999px;
-  background: #22d3ee;
-  cursor: pointer;
-  border: 2px solid #0b1220;
-  box-shadow: 0 0 0 1px #22d3ee;
+  width: 10px;
+  height: 10px;
+  margin-top: -4.5px;
+  border-radius: 0;
+  background: currentColor;
 }
-.halftone-range::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 9999px;
-  background: #22d3ee;
-  cursor: pointer;
-  border: 2px solid #0b1220;
+.ui-range::-moz-range-track {
+  height: 1px;
+  background: currentColor;
+}
+.ui-range::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: 0;
+  border-radius: 0;
+  background: currentColor;
 }

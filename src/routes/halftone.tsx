@@ -10,6 +10,7 @@ import HalftoneControls, {
 	type HalftoneParamValues,
 } from "../components/HalftoneControls";
 import { ShaderCanvas } from "../components/ShaderCanvas";
+import { ExperimentLayout, Frame, Stage } from "../components/ui/Controls";
 import { buildHalftoneColorNode, HALFTONE_SHAPES } from "../util/halftone";
 
 const SAMPLE_IMAGE = "/sample-photo.jpg";
@@ -75,10 +76,15 @@ function HalftonePage() {
 	}, []);
 
 	return (
-		<div className="flex h-screen w-screen overflow-hidden bg-slate-950">
-			<ShaderCanvas className="min-w-0 flex-1">
-				<HalftoneScene imageUrl={imageUrl} params={params} />
-			</ShaderCanvas>
+		<ExperimentLayout>
+			<Stage>
+				<Frame ratio={16 / 9}>
+					<ShaderCanvas backLink={false}>
+						<HalftoneScene imageUrl={imageUrl} params={params} />
+					</ShaderCanvas>
+				</Frame>
+			</Stage>
+
 			<HalftoneControls
 				params={params}
 				onChange={handleChange}
@@ -86,7 +92,7 @@ function HalftonePage() {
 				onResetSample={handleResetSample}
 				imageName={imageName}
 			/>
-		</div>
+		</ExperimentLayout>
 	);
 }
 

@@ -1,7 +1,20 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Dices, Download } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { Dices, Download } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import { SurfacePlotPoster } from "../components/SurfacePlotPoster";
+import {
+	ActionButton,
+	BackLink,
+	ExperimentLayout,
+	Frame,
+	Lead,
+	PageTitle,
+	Panel,
+	Section,
+	Slider,
+	Stage,
+	Toggle,
+} from "../components/ui/Controls";
 import { PLOTS_POSTER } from "../util/surfacePlots";
 
 export const Route = createFileRoute("/surface-plots")({
@@ -50,116 +63,71 @@ function SurfacePlotsPage() {
 	}, [seed]);
 
 	return (
-		<div className="flex h-screen w-screen overflow-hidden bg-slate-950">
-			<div className="flex min-w-0 flex-1 items-center justify-center p-6 md:p-8">
-				<div
-					className="h-full overflow-hidden rounded-sm shadow-2xl shadow-black/60"
-					style={{
-						aspectRatio: `${PLOTS_POSTER.width} / ${PLOTS_POSTER.height}`,
-						maxWidth: "100%",
-					}}
-				>
+		<ExperimentLayout>
+			<Stage>
+				<Frame ratio={PLOTS_POSTER.width / PLOTS_POSTER.height}>
 					<SurfacePlotPoster
 						svgRef={svgRef}
 						seed={seed}
 						density={density}
 						showFill={showFill}
 					/>
-				</div>
-			</div>
+				</Frame>
+			</Stage>
 
-			<aside className="w-80 shrink-0 overflow-y-auto border-l border-slate-800 bg-slate-900/80 p-6">
-				<Link
-					to="/"
-					className="mb-6 inline-flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-white"
-				>
-					<ArrowLeft size={16} />
-					Back to sandbox
-				</Link>
-
-				<h1 className="text-xl font-semibold text-white">Surface Plots</h1>
-				<p className="mt-2 mb-6 text-sm leading-relaxed text-slate-400">
-					Axonometric wireframe terrains (years × countries × value) with a mint
+			<Panel>
+				<BackLink />
+				<PageTitle>Surface Plots</PageTitle>
+				<Lead>
+					Axonometric wireframe terrains (years × countries × value) with a
 					projection wall, in the style of a dark data-viz poster.
-				</p>
+				</Lead>
 
-				<label className="mb-4 block">
-					<div className="mb-1.5 flex items-baseline justify-between">
-						<span className="text-xs font-medium uppercase tracking-wide text-slate-300">
-							Wireframe density
-						</span>
-						<span className="font-mono text-xs tabular-nums text-cyan-400">
-							{density}
-						</span>
-					</div>
-					<input
-						type="range"
+				<Section title="Terrain">
+					<Slider
+						label="Wireframe density"
+						value={density}
 						min={12}
 						max={48}
 						step={1}
-						value={density}
-						onChange={(e) => setDensity(Number.parseInt(e.target.value, 10))}
-						className="halftone-range w-full"
+						format={(v) => String(Math.round(v))}
+						onChange={(v) => setDensity(Math.round(v))}
 					/>
-				</label>
-
-				<label className="mb-4 block">
-					<div className="mb-1.5 flex items-baseline justify-between">
-						<span className="text-xs font-medium uppercase tracking-wide text-slate-300">
-							Seed
-						</span>
-						<span className="font-mono text-xs tabular-nums text-cyan-400">
-							{seed}
-						</span>
-					</div>
-					<input
-						type="range"
+					<Slider
+						label="Seed"
+						value={seed}
 						min={0}
 						max={999}
 						step={1}
-						value={seed}
-						onChange={(e) => setSeed(Number.parseInt(e.target.value, 10))}
-						className="halftone-range w-full"
+						format={(v) => String(Math.round(v))}
+						onChange={(v) => setSeed(Math.round(v))}
 					/>
-				</label>
+				</Section>
 
-				<div className="mb-3 flex items-center justify-between gap-3 text-sm text-slate-300">
-					<span>Mint wall</span>
-					<button
-						type="button"
-						onClick={() => setShowFill((v) => !v)}
-						className={`h-5 w-9 rounded-full transition-colors ${
-							showFill ? "bg-cyan-500" : "bg-slate-700"
-						}`}
-						aria-pressed={showFill}
-						aria-label="Toggle mint wall"
-					>
-						<span
-							className="block h-4 w-4 rounded-full bg-white transition-transform"
-							style={{ transform: `translateX(${showFill ? 18 : 2}px)` }}
-						/>
-					</button>
-				</div>
+				<Section title="Overlay">
+					<Toggle
+						label="Projection wall"
+						value={showFill}
+						onChange={setShowFill}
+					/>
+				</Section>
 
-				<div className="mt-6 flex gap-2">
-					<button
-						type="button"
+				<div className="mt-8 flex gap-2">
+					<ActionButton
 						onClick={() => setSeed(Math.floor(Math.random() * 100000))}
-						className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-cyan-500 px-3 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-cyan-400"
+						icon={<Dices size={12} />}
 					>
-						<Dices size={16} />
 						Shuffle
-					</button>
-					<button
-						type="button"
+					</ActionButton>
+					<ActionButton
 						onClick={downloadPng}
-						className="flex items-center justify-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-200 transition-colors hover:border-slate-500 hover:text-white"
+						icon={<Download size={12} />}
+						variant="outline"
 					>
-						<Download size={16} />
 						PNG
-					</button>
+					</ActionButton>
 				</div>
-			</aside>
-		</div>
+			</Panel>
+		</ExperimentLayout>
 	);
 }

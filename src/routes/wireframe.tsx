@@ -1,6 +1,19 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Download } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { Download } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
+import {
+	ActionButton,
+	BackLink,
+	ExperimentLayout,
+	Frame,
+	Lead,
+	PageTitle,
+	Panel,
+	Section,
+	Slider,
+	Stage,
+	Toggle,
+} from "../components/ui/Controls";
 import {
 	type WireframeParams,
 	WireframeTorus,
@@ -65,150 +78,82 @@ function WireframePage() {
 	}, []);
 
 	return (
-		<div className="flex h-screen w-screen overflow-hidden bg-slate-950">
-			<div className="flex min-w-0 flex-1 items-center justify-center p-6 md:p-8">
-				<div
-					className="h-full overflow-hidden rounded-sm shadow-2xl shadow-black/60"
-					style={{
-						aspectRatio: `${CAD_POSTER.width} / ${CAD_POSTER.height}`,
-						maxWidth: "100%",
-					}}
-				>
+		<ExperimentLayout>
+			<Stage>
+				<Frame ratio={CAD_POSTER.width / CAD_POSTER.height}>
 					<WireframeTorus svgRef={svgRef} {...params} />
-				</div>
-			</div>
+				</Frame>
+			</Stage>
 
-			<aside className="w-80 shrink-0 overflow-y-auto border-l border-slate-800 bg-slate-900/80 p-6">
-				<Link
-					to="/"
-					className="mb-6 inline-flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-white"
-				>
-					<ArrowLeft size={16} />
-					Back to sandbox
-				</Link>
-
-				<h1 className="text-xl font-semibold text-white">Wireframe Torus</h1>
-				<p className="mt-2 mb-6 text-sm leading-relaxed text-slate-400">
+			<Panel>
+				<BackLink />
+				<PageTitle>Wireframe Torus</PageTitle>
+				<Lead>
 					CAD-style wireframe render: transparent housing, floor grid, mm
 					dimensions and a glowing hub part.
-				</p>
+				</Lead>
 
-				<Slider
-					label="Azimuth"
-					value={params.azimuth}
-					min={-90}
-					max={90}
-					step={1}
-					suffix="°"
-					onChange={(v) => set("azimuth", Math.round(v))}
-				/>
-				<Slider
-					label="Elevation"
-					value={params.elevation}
-					min={2}
-					max={60}
-					step={1}
-					suffix="°"
-					onChange={(v) => set("elevation", Math.round(v))}
-				/>
-				<Slider
-					label="Meridians"
-					value={params.segments}
-					min={8}
-					max={48}
-					step={1}
-					onChange={(v) => set("segments", Math.round(v))}
-				/>
-				<Slider
-					label="Tube rings"
-					value={params.sides}
-					min={6}
-					max={24}
-					step={1}
-					onChange={(v) => set("sides", Math.round(v))}
-				/>
+				<Section title="View">
+					<Slider
+						label="Azimuth"
+						value={params.azimuth}
+						min={-90}
+						max={90}
+						step={1}
+						format={(v) => `${v}°`}
+						onChange={(v) => set("azimuth", Math.round(v))}
+					/>
+					<Slider
+						label="Elevation"
+						value={params.elevation}
+						min={2}
+						max={60}
+						step={1}
+						format={(v) => `${v}°`}
+						onChange={(v) => set("elevation", Math.round(v))}
+					/>
+				</Section>
 
-				<Toggle
-					label="Floor grid"
-					value={params.showGrid}
-					onChange={(v) => set("showGrid", v)}
-				/>
-				<Toggle
-					label="Dimensions"
-					value={params.showDimensions}
-					onChange={(v) => set("showDimensions", v)}
-				/>
+				<Section title="Mesh">
+					<Slider
+						label="Meridians"
+						value={params.segments}
+						min={8}
+						max={48}
+						step={1}
+						format={(v) => String(Math.round(v))}
+						onChange={(v) => set("segments", Math.round(v))}
+					/>
+					<Slider
+						label="Tube rings"
+						value={params.sides}
+						min={6}
+						max={24}
+						step={1}
+						format={(v) => String(Math.round(v))}
+						onChange={(v) => set("sides", Math.round(v))}
+					/>
+				</Section>
 
-				<button
-					type="button"
-					onClick={downloadPng}
-					className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-200 transition-colors hover:border-slate-500 hover:text-white"
-				>
-					<Download size={16} />
-					PNG
-				</button>
-			</aside>
-		</div>
-	);
-}
+				<Section title="Overlay">
+					<Toggle
+						label="Floor grid"
+						value={params.showGrid}
+						onChange={(v) => set("showGrid", v)}
+					/>
+					<Toggle
+						label="Dimensions"
+						value={params.showDimensions}
+						onChange={(v) => set("showDimensions", v)}
+					/>
+				</Section>
 
-function Slider(props: {
-	label: string;
-	value: number;
-	min: number;
-	max: number;
-	step: number;
-	suffix?: string;
-	onChange: (v: number) => void;
-}) {
-	const { label, value, min, max, step, suffix, onChange } = props;
-	return (
-		<label className="mb-4 block">
-			<div className="mb-1.5 flex items-baseline justify-between">
-				<span className="text-xs font-medium uppercase tracking-wide text-slate-300">
-					{label}
-				</span>
-				<span className="font-mono text-xs tabular-nums text-cyan-400">
-					{value}
-					{suffix ?? ""}
-				</span>
-			</div>
-			<input
-				type="range"
-				min={min}
-				max={max}
-				step={step}
-				value={value}
-				onChange={(e) => onChange(Number.parseFloat(e.target.value))}
-				className="halftone-range w-full"
-			/>
-		</label>
-	);
-}
-
-function Toggle(props: {
-	label: string;
-	value: boolean;
-	onChange: (v: boolean) => void;
-}) {
-	const { label, value, onChange } = props;
-	return (
-		<div className="mb-3 flex items-center justify-between gap-3 text-sm text-slate-300">
-			<span>{label}</span>
-			<button
-				type="button"
-				onClick={() => onChange(!value)}
-				className={`h-5 w-9 rounded-full transition-colors ${
-					value ? "bg-cyan-500" : "bg-slate-700"
-				}`}
-				aria-pressed={value}
-				aria-label={label}
-			>
-				<span
-					className="block h-4 w-4 rounded-full bg-white transition-transform"
-					style={{ transform: `translateX(${value ? 18 : 2}px)` }}
-				/>
-			</button>
-		</div>
+				<div className="mt-8 flex gap-2">
+					<ActionButton onClick={downloadPng} icon={<Download size={12} />}>
+						Export PNG
+					</ActionButton>
+				</div>
+			</Panel>
+		</ExperimentLayout>
 	);
 }

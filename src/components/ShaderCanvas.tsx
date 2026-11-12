@@ -55,9 +55,9 @@ export function ShaderCanvas({
 			{backLink && (
 				<Link
 					to="/"
-					className="absolute top-4 left-4 z-10 flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-sm text-white/70 backdrop-blur-md transition-colors hover:border-white/25 hover:text-white"
+					className="absolute top-3 left-3 z-10 flex items-center gap-2 border border-black bg-white px-2.5 py-1.5 font-gothic text-[10px] font-medium uppercase tracking-[0.2em] text-black transition-opacity hover:opacity-70"
 				>
-					<ArrowLeft size={14} />
+					<ArrowLeft size={12} />
 					Sandbox
 				</Link>
 			)}

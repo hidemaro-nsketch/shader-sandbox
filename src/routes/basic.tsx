@@ -52,10 +52,12 @@ export const Route = createFileRoute("/basic")({
 
 function BasicShaderPage() {
 	return (
-		<main className="h-screen w-screen bg-slate-900 p-12">
-			<ShaderCanvas className="rounded-2xl">
-				<Scene />
-			</ShaderCanvas>
+		<main className="h-screen w-screen bg-white p-5 font-gothic sm:p-8">
+			<div className="h-full w-full border border-black">
+				<ShaderCanvas>
+					<Scene />
+				</ShaderCanvas>
+			</div>
 		</main>
 	);
 }
