@@ -9,7 +9,7 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 
 export function ExperimentLayout({ children }: { children: ReactNode }) {
 	return (
-		<div className="flex h-screen w-screen overflow-hidden bg-white font-gothic text-black">
+		<div className="flex h-dvh w-full flex-col overflow-hidden bg-white font-gothic text-black md:flex-row">
 			{children}
 		</div>
 	);
@@ -17,7 +17,7 @@ export function ExperimentLayout({ children }: { children: ReactNode }) {
 
 export function Stage({ children }: { children: ReactNode }) {
 	return (
-		<main className="flex min-w-0 flex-1 items-center justify-center p-5 sm:p-8">
+		<main className="flex min-h-0 min-w-0 flex-1 items-center justify-center p-4 sm:p-8">
 			{children}
 		</main>
 	);
@@ -61,7 +61,7 @@ export function Frame({
 
 export function Panel({ children }: { children: ReactNode }) {
 	return (
-		<aside className="w-[340px] shrink-0 overflow-y-auto border-l border-black bg-white px-6 py-5">
+		<aside className="max-h-[52dvh] w-full shrink-0 overflow-y-auto border-t border-black bg-white px-5 pt-4 pb-6 md:max-h-none md:w-[320px] md:border-t-0 md:border-l lg:w-[340px] lg:px-6 lg:py-5">
 			{children}
 		</aside>
 	);
@@ -160,15 +160,16 @@ export function Toggle(props: {
 				aria-checked={value}
 				aria-label={label}
 				onClick={() => onChange(!value)}
-				className={`h-[18px] w-9 border border-black transition-colors ${
+				className={`h-[18px] w-9 shrink-0 border border-black transition-colors pointer-coarse:h-6 pointer-coarse:w-11 ${
 					value ? "bg-black" : "bg-white"
 				}`}
 			>
 				<span
-					className={`block h-[14px] w-[14px] border border-black transition-transform ${
-						value ? "bg-white" : "bg-black"
+					className={`block h-[14px] w-[14px] border border-black transition-transform pointer-coarse:h-[18px] pointer-coarse:w-[18px] ${
+						value
+							? "translate-x-[18px] bg-white pointer-coarse:translate-x-[22px]"
+							: "translate-x-[1px] bg-black"
 					}`}
-					style={{ transform: `translateX(${value ? 18 : 1}px)` }}
 				/>
 			</button>
 		</div>

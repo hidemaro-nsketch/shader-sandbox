@@ -53,3 +53,23 @@ body {
   border-radius: 0;
   background: currentColor;
 }
+
+/* Touch devices: taller hit area and a larger thumb */
+@media (pointer: coarse) {
+  /* Keep text fields at >=16px so iOS does not zoom on focus */
+  input:not([type="range"]) {
+    font-size: 16px;
+  }
+  .ui-range {
+    height: 24px;
+  }
+  .ui-range::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+    margin-top: -6.5px;
+  }
+  .ui-range::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+  }
+}
