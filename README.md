@@ -48,6 +48,7 @@ VERCEL=1 pnpm build   # .vercel/output が生成される
 | --- | --- |
 | `/basic` | TSL の UV グラデーション + 時間アニメ（最小サンプル。ギャラリーには未掲載） |
 | `/halftone` | 写真のハーフトーン（網点）化。密度・形状・角度・色モードをライブ調整、画像アップロード可 |
+| `/handoff` | ピクセルモザイクの組織図（ハンドオフ・タワー）。青い配管が2つのキャップから分岐し、ボウタイ型コネクタを経て下段へ扇状に広がる（PNG 書き出し可） |
 | `/paper-chain` | 切り絵風の人間チェーン・ポスター生成。シードごとに図形・ピクセルパッチ・注釈ラベルが変わる（PNG 書き出し可） |
 | `/surface-plots` | ワイヤーフレームの3Dサーフェス（年 × 国 × 値）を並べたデータビズ風ポスター。ミント色の投影ウォール付き（PNG 書き出し可） |
 | `/wireframe` | CAD風のワイヤーフレーム・トーラス。透過ハウジング、床グリッド、mm寸法線、発光するハブパーツ |
@@ -60,12 +61,15 @@ src/
   routes/
     index.tsx                 # ギャラリー（experiments.ts から自動生成）
     basic.tsx, halftone.tsx   # 各実験ページ
+    handoff.tsx               # ハンドオフ・タワーのポスター生成ページ
     paper-chain.tsx           # 切り絵ポスター生成ページ
     surface-plots.tsx         # サーフェスプロットポスター生成ページ
     wireframe.tsx             # CAD風ワイヤーフレームページ
   components/
+    ui/Controls.tsx           # 白黒の共通UIキット（レイアウト・パネル・スライダー等）
     ShaderCanvas.tsx          # 共通キャンバス（レンダラ初期化・正射影カメラ・戻るリンク）
     HalftoneControls.tsx      # ハーフトーンのパラメータパネル
+    HandoffTower.tsx          # ハンドオフ・タワーの SVG レンダラ
     PaperPoster.tsx           # 切り絵ポスターの SVG レンダラ
     SurfacePlotPoster.tsx     # サーフェスプロットポスターの SVG レンダラ
     WireframeTorus.tsx        # CAD風ワイヤーフレームの SVG レンダラ
@@ -73,6 +77,7 @@ src/
     halftone.ts               # ハーフトーンの TSL ノードグラフ
     paperPoster.ts            # ポスターのレイアウト生成（シード RNG）
     surfacePlots.ts           # 地形データ生成 + 斜投影の計算
+    handoffTower.ts           # タワーのレイアウト生成（シード RNG）
     wireframeTorus.ts         # トーラス/シリンダのワイヤー生成と透視投影
     shader.ts                 # TSL の小道具（アスペクト補正 UV など）
     webgpu-polyfill.ts        # WebGPU 非対応環境向けポリフィル（必ず最初に import）
@@ -87,16 +92,22 @@ public/                       # 実験で使う画像などの素材
 
    ```tsx
    import { createFileRoute } from "@tanstack/react-router";
-   import { ShaderCanvas } from "../components/ShaderCanvas";
+   import { ExperimentLayout, Frame, Panel, Stage } from "../components/ui/Controls";
 
    export const Route = createFileRoute("/waves")({
      component: () => (
-       <main className="h-screen w-screen bg-slate-900 p-12">
-         <ShaderCanvas className="rounded-2xl">{/* シーン */}</ShaderCanvas>
-       </main>
+       <ExperimentLayout>
+         <Stage>
+           <Frame ratio={16 / 9}>{/* シーン */}</Frame>
+         </Stage>
+         <Panel>{/* コントロール */}</Panel>
+       </ExperimentLayout>
      ),
    });
    ```
+
+   ページの外枠・黒枠・コントロール類は `components/ui/Controls.tsx` の白黒UIキットに揃える
+   （`ExperimentLayout` / `Stage` / `Frame` / `Panel` / `Slider` / `Toggle` / `Segmented` / `ActionButton`）。
 
 3. `public/previews/<name>.webp` にスクショを置く（1200×675 / 16:9）
 4. `src/experiments.ts` に 1 エントリ追加（タイトル・プレビュー画像・タグ）。

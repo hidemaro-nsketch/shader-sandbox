@@ -8,7 +8,12 @@
  */
 export type Experiment = {
 	/** Route path of the experiment (must exist in `src/routes`). */
-	to: "/halftone" | "/paper-chain" | "/surface-plots" | "/wireframe";
+	to:
+		| "/halftone"
+		| "/handoff"
+		| "/paper-chain"
+		| "/surface-plots"
+		| "/wireframe";
 	title: string;
 	/** Screenshot shown on the gallery card (public/previews). */
 	preview: string;
@@ -22,6 +27,12 @@ export const experiments: readonly Experiment[] = [
 		title: "Halftone",
 		preview: "/previews/halftone.webp",
 		tags: ["image", "halftone"],
+	},
+	{
+		to: "/handoff",
+		title: "Handoff Tower",
+		preview: "/previews/handoff.webp",
+		tags: ["poster", "mosaic"],
 	},
 	{
 		to: "/paper-chain",

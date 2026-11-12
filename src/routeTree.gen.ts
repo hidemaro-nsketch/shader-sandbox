@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BasicRouteImport } from './routes/basic'
 import { Route as HalftoneRouteImport } from './routes/halftone'
+import { Route as HandoffRouteImport } from './routes/handoff'
 import { Route as PaperChainRouteImport } from './routes/paper-chain'
 import { Route as SurfacePlotsRouteImport } from './routes/surface-plots'
 import { Route as WireframeRouteImport } from './routes/wireframe'
@@ -29,6 +30,11 @@ const BasicRoute = BasicRouteImport.update({
 const HalftoneRoute = HalftoneRouteImport.update({
   id: '/halftone',
   path: '/halftone',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HandoffRoute = HandoffRouteImport.update({
+  id: '/handoff',
+  path: '/handoff',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaperChainRoute = PaperChainRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
+  '/handoff': typeof HandoffRoute
   '/paper-chain': typeof PaperChainRoute
   '/surface-plots': typeof SurfacePlotsRoute
   '/wireframe': typeof WireframeRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
+  '/handoff': typeof HandoffRoute
   '/paper-chain': typeof PaperChainRoute
   '/surface-plots': typeof SurfacePlotsRoute
   '/wireframe': typeof WireframeRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
+  '/handoff': typeof HandoffRoute
   '/paper-chain': typeof PaperChainRoute
   '/surface-plots': typeof SurfacePlotsRoute
   '/wireframe': typeof WireframeRoute
@@ -78,6 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/basic'
     | '/halftone'
+    | '/handoff'
     | '/paper-chain'
     | '/surface-plots'
     | '/wireframe'
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/basic'
     | '/halftone'
+    | '/handoff'
     | '/paper-chain'
     | '/surface-plots'
     | '/wireframe'
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/basic'
     | '/halftone'
+    | '/handoff'
     | '/paper-chain'
     | '/surface-plots'
     | '/wireframe'
@@ -103,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BasicRoute: typeof BasicRoute
   HalftoneRoute: typeof HalftoneRoute
+  HandoffRoute: typeof HandoffRoute
   PaperChainRoute: typeof PaperChainRoute
   SurfacePlotsRoute: typeof SurfacePlotsRoute
   WireframeRoute: typeof WireframeRoute
@@ -129,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/halftone'
       fullPath: '/halftone'
       preLoaderRoute: typeof HalftoneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/handoff': {
+      id: '/handoff'
+      path: '/handoff'
+      fullPath: '/handoff'
+      preLoaderRoute: typeof HandoffRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/paper-chain': {
@@ -159,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BasicRoute: BasicRoute,
   HalftoneRoute: HalftoneRoute,
+  HandoffRoute: HandoffRoute,
   PaperChainRoute: PaperChainRoute,
   SurfacePlotsRoute: SurfacePlotsRoute,
   WireframeRoute: WireframeRoute,
