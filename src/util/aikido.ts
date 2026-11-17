@@ -111,9 +111,9 @@ export function cloudShape(rng: Rng, spec: CloudSpec): Cloud {
 	// the valleys stay crisp, like the cloud motif in the campaign.
 	const bumpCount = Math.max(2, lumps);
 	const bumps = Array.from({ length: bumpCount }, (_, i) => ({
-		c: (i + 0.5) / bumpCount + range(rng, -0.04, 0.04),
-		w: range(rng, 0.42, 0.62) / bumpCount,
-		a: range(rng, 0.55, 1),
+		c: (i + 0.5) / bumpCount + range(rng, -0.03, 0.03),
+		w: range(rng, 0.5, 0.72) / bumpCount,
+		a: range(rng, 0.6, 0.95),
 	}));
 	const bumpAt = (t: number) => {
 		let v = 0;
@@ -124,8 +124,8 @@ export function cloudShape(rng: Rng, spec: CloudSpec): Cloud {
 		}
 		return v;
 	};
-	const shoulder = y + h * 0.42;
-	const crown = y + h * 0.02;
+	const shoulder = y + h * 0.45;
+	const crown = y + h * 0.06;
 	const topAt = (t: number) => shoulder - (shoulder - crown) * bumpAt(t);
 
 	const bottomAt = (t: number) =>

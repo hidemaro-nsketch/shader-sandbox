@@ -63,24 +63,27 @@ function useConfetti(rng: Rng) {
 
 /** Concentric arcs of the dark card: the "code tunnel". */
 function tunnelArcs() {
-	const arcs: { d: string; violet: boolean; offset: number }[] = [];
-	const cx = 462;
-	const cy = 1210;
-	for (let i = 0; i < 18; i++) {
-		const r = 1020 - i * 36;
-		const a0 = (-175 * Math.PI) / 180;
-		const a1 = (-5 * Math.PI) / 180;
-		const x0 = cx + r * Math.cos(a0);
-		const y0 = cy + r * Math.sin(a0);
-		const x1 = cx + r * Math.cos(a1);
-		const y1 = cy + r * Math.sin(a1);
+	const arcs: { d: string; r: number; offset: number }[] = [];
+	const cx = 461;
+	const cy = 532;
+	for (let i = 0; i < 15; i++) {
+		const r = 310 - i * 20;
 		arcs.push({
-			d: `M${round(x0)} ${round(y0)}A${r} ${r} 0 0 1 ${round(x1)} ${round(y1)}`,
-			violet: i >= 9 && i <= 14,
-			offset: i * 23,
+			d: `M${round(cx - r)} ${cy}A${r} ${r} 0 0 1 ${round(cx + r)} ${cy}`,
+			r,
+			offset: i * 31,
 		});
 	}
 	return arcs;
+}
+
+/** Middle stretch of an arc, used for the violet band. */
+function arcSpan(r: number, fromDeg: number, toDeg: number) {
+	const cx = 461;
+	const cy = 532;
+	const a0 = (fromDeg * Math.PI) / 180;
+	const a1 = (toDeg * Math.PI) / 180;
+	return `M${round(cx + r * Math.cos(a0))} ${round(cy - r * Math.sin(a0))}A${r} ${r} 0 0 1 ${round(cx + r * Math.cos(a1))} ${round(cy - r * Math.sin(a1))}`;
 }
 
 /** Pale brick rows of the light card, laid out along wide arcs. */
@@ -199,10 +202,21 @@ export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 							key={arc.d.slice(0, 22)}
 							d={arc.d}
 							fill="none"
-							stroke={arc.violet ? AK.violet : AK.yellow}
-							strokeWidth={12}
-							strokeDasharray="58 10"
+							stroke={AK.yellow}
+							strokeWidth={8}
+							strokeDasharray="100 8"
 							strokeDashoffset={arc.offset}
+						/>
+					))}
+					{arcs.slice(4, 10).map((arc, i) => (
+						<path
+							key={`v${arc.r}`}
+							d={arcSpan(arc.r, 124, 56)}
+							fill="none"
+							stroke={AK.violet}
+							strokeWidth={8}
+							strokeDasharray="100 8"
+							strokeDashoffset={arc.offset + 50 + i * 7}
 						/>
 					))}
 				</g>

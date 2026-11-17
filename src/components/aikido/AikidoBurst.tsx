@@ -29,12 +29,12 @@ type Bar = {
 function useBurst(rng: Rng) {
 	return useMemo(() => {
 		const bars: Bar[] = [];
-		const count = 170;
+		const count = 230;
 		for (let i = 0; i < count; i++) {
-			const deg = (i / count) * 360 + range(rng, -1.2, 1.2);
+			const deg = (i / count) * 360 + range(rng, -1.0, 1.0);
 			const rad = (deg * Math.PI) / 180;
-			const r0 = range(rng, 130, 280);
-			const len = range(rng, 60, 240);
+			const r0 = range(rng, 130, 300);
+			const len = range(rng, 50, 200);
 			const hot =
 				(deg > 150 && deg < 215) ||
 				(deg > 240 && deg < 272) ||
@@ -46,7 +46,7 @@ function useBurst(rng: Rng) {
 				x2: round(CENTER.x + Math.sin(rad) * (r0 + len)),
 				y2: round(CENTER.y - Math.cos(rad) * (r0 + len)),
 				hot,
-				width: round(range(rng, 8, 12)),
+				width: round(range(rng, 7, 11)),
 			});
 		}
 		return bars;
@@ -109,6 +109,7 @@ export function AikidoBurst({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 						y2={b.y2}
 						stroke={b.hot ? AK.orange : "#3a3a3a"}
 						strokeWidth={b.width}
+						strokeDasharray="44 7"
 					/>
 				))}
 			</g>
