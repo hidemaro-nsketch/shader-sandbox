@@ -11,21 +11,21 @@
 export const AIKIDO_POSTER = { width: 1600, height: 960 } as const;
 
 export const AK = {
-	ink: "#111110",
-	inkSoft: "#2a2a28",
-	paper: "#f2f1ef",
-	paperDeep: "#e9e7e4",
-	hairline: "#d3d0cc",
+	ink: "#1d1d1d",
+	inkSoft: "#2a2a2a",
+	paper: "#f2f2f0",
+	paperDeep: "#e3e3e1",
+	hairline: "#d4d4d3",
 	white: "#ffffff",
-	orange: "#f4570a",
-	orangeDeep: "#c93f00",
-	blue: "#2f63ff",
-	violet: "#c78bf5",
-	violetDeep: "#a973e6",
-	yellow: "#f2e520",
-	green: "#00b877",
-	night: "#141413",
-	nightSoft: "#1e1e1d",
+	orange: "#fa6d01",
+	orangeDeep: "#d95b00",
+	blue: "#2b5cff",
+	violet: "#dc9afd",
+	violetDeep: "#b673ea",
+	yellow: "#fae501",
+	green: "#01cd6e",
+	night: "#1d1d1d",
+	nightSoft: "#262626",
 } as const;
 
 export const FONT_SANS =
@@ -107,21 +107,24 @@ export function cloudShape(rng: Rng, spec: CloudSpec): Cloud {
 	const bottomY = y + h;
 	const wave = h * 0.06;
 
-	// Soft, overlapping bumps: sum of gaussians along the width. Sampling the
-	// result keeps the outline organic instead of a row of identical arcs.
-	const bumps = Array.from({ length: lumps }, () => ({
-		c: range(rng, -0.02, 1.02),
-		w: range(rng, 0.045, 0.1),
+	// Puffy circular bumps: sampling the max keeps the silhouette organic while
+	// the valleys stay crisp, like the cloud motif in the campaign.
+	const bumpCount = Math.max(2, lumps);
+	const bumps = Array.from({ length: bumpCount }, (_, i) => ({
+		c: (i + 0.5) / bumpCount + range(rng, -0.04, 0.04),
+		w: range(rng, 0.42, 0.62) / bumpCount,
 		a: range(rng, 0.55, 1),
 	}));
 	const bumpAt = (t: number) => {
 		let v = 0;
 		for (const b of bumps) {
-			v = Math.max(v, b.a * Math.exp(-((t - b.c) ** 2) / (2 * b.w * b.w)));
+			const u = (t - b.c) / b.w;
+			if (Math.abs(u) >= 1) continue;
+			v = Math.max(v, b.a * Math.sqrt(1 - u * u));
 		}
 		return v;
 	};
-	const shoulder = y + h * 0.34;
+	const shoulder = y + h * 0.42;
 	const crown = y + h * 0.02;
 	const topAt = (t: number) => shoulder - (shoulder - crown) * bumpAt(t);
 

@@ -19,7 +19,7 @@ import {
 const SEED = 0x4c0d;
 
 type Hill = {
-	/** Flat level the hill rises from. */
+	/** Flat level the hill falls back to. */
 	base: number;
 	/** Height of the crest above the flat level. */
 	amp: number;
@@ -30,10 +30,10 @@ type Hill = {
 };
 
 const HILLS: Record<"grey" | "yellow" | "violet" | "green", Hill> = {
-	grey: { base: 960, amp: 380, peak: 430, spread: 700 },
-	yellow: { base: 985, amp: 425, peak: 1020, spread: 900 },
-	violet: { base: 995, amp: 380, peak: 1120, spread: 860 },
-	green: { base: 1010, amp: 325, peak: 1200, spread: 820 },
+	grey: { base: 880, amp: 220, peak: 410, spread: 434 },
+	yellow: { base: 1000, amp: 309, peak: 1030, spread: 777 },
+	violet: { base: 995, amp: 246, peak: 1075, spread: 500 },
+	green: { base: 992, amp: 180, peak: 1100, spread: 381 },
 };
 
 const hillY = (h: Hill, x: number) =>
@@ -41,7 +41,7 @@ const hillY = (h: Hill, x: number) =>
 
 function hillPath(h: Hill) {
 	const pts: string[] = [];
-	for (let x = -10; x <= 1610; x += 12) {
+	for (let x = -10; x <= 1610; x += 8) {
 		pts.push(`${round(x)} ${round(hillY(h, x))}`);
 	}
 	return `M-10 960L${pts.join("L")}L1610 960Z`;
@@ -50,7 +50,7 @@ function hillPath(h: Hill) {
 /** A dashed line that follows a hill, offset below the crest. */
 function followHill(h: Hill, offset: number) {
 	const pts: string[] = [];
-	for (let x = -10; x <= 1610; x += 14) {
+	for (let x = -10; x <= 1610; x += 10) {
 		pts.push(`${round(x)} ${round(hillY(h, x) + offset)}`);
 	}
 	return `M${pts.join("L")}`;
@@ -60,7 +60,7 @@ function followHill(h: Hill, offset: number) {
 function crestBand(h: Hill, thickness: number) {
 	const top: string[] = [];
 	const bottom: string[] = [];
-	for (let x = -10; x <= 1610; x += 12) {
+	for (let x = -10; x <= 1610; x += 8) {
 		top.push(`${round(x)} ${round(hillY(h, x))}`);
 		bottom.unshift(`${round(x)} ${round(hillY(h, x) + thickness)}`);
 	}
@@ -68,12 +68,12 @@ function crestBand(h: Hill, thickness: number) {
 }
 
 const CLOUDS = [
-	{ x: 50, y: 26, w: 380, h: 108, lumps: 5, tick: 34 },
-	{ x: -10, y: 168, w: 260, h: 76, lumps: 4, tick: 28 },
-	{ x: 280, y: 214, w: 190, h: 76, lumps: 3, tick: 28 },
-	{ x: 1090, y: 40, w: 170, h: 78, lumps: 3, tick: 30 },
-	{ x: 1180, y: 166, w: 320, h: 66, lumps: 4, tick: 26 },
-	{ x: 1320, y: 272, w: 300, h: 62, lumps: 4, tick: 24 },
+	{ x: 55, y: 26, w: 375, h: 108, lumps: 5, tick: 34 },
+	{ x: -40, y: 166, w: 285, h: 78, lumps: 4, tick: 28 },
+	{ x: 265, y: 212, w: 190, h: 60, lumps: 3, tick: 26 },
+	{ x: 1115, y: 34, w: 180, h: 78, lumps: 3, tick: 30 },
+	{ x: 1215, y: 164, w: 315, h: 52, lumps: 5, tick: 24 },
+	{ x: 1350, y: 268, w: 260, h: 44, lumps: 4, tick: 22 },
 ];
 
 export function AikidoReviews({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
@@ -107,39 +107,51 @@ export function AikidoReviews({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 				</clipPath>
 				<pattern
 					id={`${ids}-hatch`}
-					width={34}
-					height={34}
+					width={44}
+					height={44}
 					patternUnits="userSpaceOnUse"
-					patternTransform="rotate(42)"
 				>
-					<rect width={15} height={34} fill="#6e6d6a" />
+					<rect
+						x={2}
+						y={2}
+						width={7}
+						height={26}
+						fill="#5d5d5b"
+						transform="rotate(38 5.5 15)"
+					/>
 				</pattern>
 				<pattern
 					id={`${ids}-dots`}
+					width={22}
+					height={22}
+					patternUnits="userSpaceOnUse"
+				>
+					<rect width={10} height={10} fill={AK.orange} />
+				</pattern>
+				<pattern
+					id={`${ids}-greenhatch`}
 					width={26}
 					height={26}
 					patternUnits="userSpaceOnUse"
 				>
-					<rect width={9} height={9} fill={AK.orange} />
-				</pattern>
-				<pattern
-					id={`${ids}-greenhatch`}
-					width={22}
-					height={22}
-					patternUnits="userSpaceOnUse"
-					patternTransform="rotate(38)"
-				>
-					<rect width={2.6} height={22} fill="#0b7d54" />
+					<line
+						x1={0}
+						y1={26}
+						x2={26}
+						y2={0}
+						stroke="#0b5c3d"
+						strokeWidth={2.4}
+					/>
 				</pattern>
 			</defs>
 
-			<rect width={1600} height={960} fill="#f0efec" />
+			<rect width={1600} height={960} fill={AK.paper} />
 
 			{/* clouds */}
 			{clouds.map((c) => (
 				<g key={c.d.slice(0, 24)}>
-					<path d={c.d} fill="#f0efec" stroke={AK.ink} strokeWidth={2} />
-					<g stroke={AK.ink} strokeWidth={1.3}>
+					<path d={c.d} fill={AK.paper} stroke={AK.ink} strokeWidth={2} />
+					<g stroke={AK.ink} strokeWidth={1.2}>
 						{c.ticks.map((t) => (
 							<line
 								key={`${t.x1}-${t.y2}`}
@@ -155,27 +167,23 @@ export function AikidoReviews({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 
 			{/* grey hatched hill */}
 			<g clipPath={clip("grey")}>
-				<rect width={1600} height={960} fill="#f0efec" />
+				<rect width={1600} height={960} fill={AK.paper} />
 				<rect width={1600} height={960} fill={`url(#${ids}-hatch)`} />
 			</g>
 
-			{/* yellow hill with orange dots */}
+			{/* yellow hill, with a band of orange dots under its crest */}
 			<g clipPath={clip("yellow")}>
 				<rect width={1600} height={960} fill={AK.yellow} />
-				<path d={crestBand(HILLS.yellow, 130)} fill={`url(#${ids}-dots)`} />
+				<path d={crestBand(HILLS.yellow, 52)} fill={`url(#${ids}-dots)`} />
 			</g>
-			{/* blue tick */}
-			<rect x={342} y={775} width={18} height={88} fill={AK.blue} />
 
-			{/* violet hill */}
-			<path d={hillPath(HILLS.violet)} fill={AK.white} />
-			<g
-				fill="none"
-				stroke={AK.violet}
-				strokeWidth={11}
-				strokeDasharray="34 22"
-			>
-				{[6, 34, 62, 90].map((offset) => (
+			{/* violet tick on the yellow */}
+			<rect x={342} y={772} width={18} height={92} fill={AK.blue} />
+
+			{/* paper band with violet dashes, in front of the yellow */}
+			<path d={hillPath(HILLS.violet)} fill={AK.paper} />
+			<g fill="none" stroke={AK.violet} strokeWidth={9} strokeDasharray="34 22">
+				{[9, 41, 73, 105].map((offset) => (
 					<path key={offset} d={followHill(HILLS.violet, offset)} />
 				))}
 			</g>
@@ -184,36 +192,36 @@ export function AikidoReviews({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			<g clipPath={clip("green")}>
 				<rect width={1600} height={960} fill={AK.green} />
 				<rect
-					x={1080}
-					width={520}
+					x={930}
+					width={200}
 					height={960}
 					fill={`url(#${ids}-greenhatch)`}
 				/>
-				<rect x={1096} width={13} height={960} fill="#e2450f" />
 			</g>
-			<g fontFamily={FONT_MONO} fill="#0b6b47">
-				<text x={700} y={828} fontSize={26}>
+			<g fontFamily={FONT_MONO} fill="#0b5c3d">
+				<text x={700} y={858} fontSize={24}>
 					{"+++++++[ ////////////////// ]"}
 				</text>
-				<text x={840} y={872} fontSize={22}>
+				<text x={840} y={900} fontSize={20}>
 					01010101
 				</text>
-				<text x={700} y={900} fontSize={26}>
+				<text x={700} y={940} fontSize={24}>
 					{"++++++++[ ///////////////////// ]"}
 				</text>
-				<text x={980} y={846} fontSize={34} fill="#0a5d3c">
+				<text x={905} y={900} fontSize={30} fill="#0a4d33">
 					{"01010101/////"}
 				</text>
 			</g>
+			<rect x={1113} y={800} width={13} height={160} fill="#e2450f" />
 
 			{/* logo + headline */}
-			<g transform="translate(742 272)">
-				<path d={markPath(34)} fill={AK.ink} />
+			<g transform="translate(704 274)">
+				<path d={markPath(45)} fill={AK.ink} />
 				<text
-					x={44}
-					y={31}
+					x={63}
+					y={45}
 					fontFamily={FONT_SANS}
-					fontSize={32}
+					fontSize={44}
 					fontWeight={700}
 					letterSpacing="-0.02em"
 					fill={AK.ink}
@@ -223,19 +231,19 @@ export function AikidoReviews({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			</g>
 			<g
 				fontFamily={FONT_SANS}
-				fontSize={68}
+				fontSize={69.5}
 				fontWeight={500}
 				letterSpacing="-0.025em"
 				fill={AK.ink}
 				textAnchor="middle"
 			>
-				<text x={800} y={400}>
+				<text x={803} y={409}>
 					Code reviews that fix
 				</text>
-				<text x={800} y={471}>
+				<text x={803} y={489}>
 					your code, not just
 				</text>
-				<text x={800} y={542}>
+				<text x={803} y={569}>
 					comment on it.
 				</text>
 			</g>

@@ -30,10 +30,10 @@ function useSkyline(rng: Rng) {
 			h: number;
 			shelf?: number;
 		}[] = [];
-		let x = -30;
-		while (x < AIKIDO_POSTER.width + 40) {
-			const w = range(rng, 22, 84);
-			const h = range(rng, 70, 340);
+		let x = -10;
+		while (x < AIKIDO_POSTER.width + 20) {
+			const w = range(rng, 8, 38);
+			const h = range(rng, 70, 330);
 			towers.push({
 				x: round(x),
 				y: round(960 - h),
@@ -41,7 +41,7 @@ function useSkyline(rng: Rng) {
 				h: round(h),
 				shelf: rng() > 0.6 ? round(960 - h * range(rng, 0.3, 0.6)) : undefined,
 			});
-			x += w + range(rng, 6, 40);
+			x += w + range(rng, 10, 34);
 		}
 		return towers;
 	}, [rng]);
@@ -486,7 +486,7 @@ export function AikidoHero({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 					aikido
 				</text>
 
-				<g fontFamily={FONT_SANS} fontSize={19} fill={AK.ink}>
+				<g fontFamily={FONT_SANS} fontSize={20} fill={AK.ink}>
 					{[
 						["Products", 500],
 						["Solutions", 600],
@@ -495,7 +495,7 @@ export function AikidoHero({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 						["Pricing", 876],
 						["Contact", 952],
 					].map(([label, x]) => (
-						<text key={label} x={x as number} y={70}>
+						<text key={label} x={x as number} y={62}>
 							{label}
 						</text>
 					))}
@@ -531,36 +531,36 @@ export function AikidoHero({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 				{/* headline */}
 				<g
 					fontFamily={FONT_SANS}
-					fontSize={58}
+					fontSize={55.5}
 					fontWeight={500}
 					letterSpacing="-0.025em"
 					fill={AK.ink}
 				>
-					<text x={70} y={222}>
+					<text x={55} y={207}>
 						Protect all that
 					</text>
-					<text x={70} y={280}>
+					<text x={55} y={264}>
 						developers create,
 					</text>
-					<text x={70} y={338}>
+					<text x={55} y={321}>
 						deploy, and manage.
 					</text>
 				</g>
 
 				{/* right column copy */}
 				<g fontFamily={FONT_SANS} fontSize={19} fill={AK.ink}>
-					<text x={1102} y={186}>
+					<text x={1093} y={186}>
 						Autonomously attack your running applications,
 					</text>
-					<text x={1102} y={209}>
+					<text x={1093} y={209}>
 						APIs and infrastructure to prove what’s actually
 					</text>
-					<text x={1102} y={232}>
+					<text x={1093} y={232}>
 						exploitable, before others do.
 					</text>
 				</g>
 				<rect
-					x={1102}
+					x={1093}
 					y={264}
 					width={132}
 					height={34}
@@ -569,7 +569,7 @@ export function AikidoHero({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 					strokeWidth={1.6}
 				/>
 				<text
-					x={1118}
+					x={1109}
 					y={287}
 					fontFamily={FONT_SANS}
 					fontSize={14}
@@ -579,14 +579,16 @@ export function AikidoHero({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 					START FREE
 				</text>
 				<path
-					d="M1210 281h9m-3.6-3.6 3.6 3.6-3.6 3.6"
+					d="M1201 281h9m-3.6-3.6 3.6 3.6-3.6 3.6"
 					fill="none"
 					stroke={AK.ink}
 					strokeWidth={1.6}
 				/>
 			</g>
 
-			<Card />
+			<g transform="translate(0 18)">
+				<Card />
+			</g>
 		</svg>
 	);
 }

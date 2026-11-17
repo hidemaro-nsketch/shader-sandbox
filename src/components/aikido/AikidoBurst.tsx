@@ -15,7 +15,7 @@ import {
  */
 
 const SEED = 0x6b11;
-const CENTER = { x: 800, y: 500 };
+const CENTER = { x: 810, y: 480 };
 
 type Bar = {
 	x1: number;
@@ -29,20 +29,24 @@ type Bar = {
 function useBurst(rng: Rng) {
 	return useMemo(() => {
 		const bars: Bar[] = [];
-		const count = 132;
+		const count = 170;
 		for (let i = 0; i < count; i++) {
-			const deg = (i / count) * 360 + range(rng, -1.6, 1.6);
+			const deg = (i / count) * 360 + range(rng, -1.2, 1.2);
 			const rad = (deg * Math.PI) / 180;
-			const r0 = range(rng, 120, 300);
-			const len = range(rng, 55, 210);
-			const hot = (deg > 96 && deg < 258) || (deg > 288 && deg < 326);
+			const r0 = range(rng, 130, 280);
+			const len = range(rng, 60, 240);
+			const hot =
+				(deg > 150 && deg < 215) ||
+				(deg > 240 && deg < 272) ||
+				(deg > 296 && deg < 336) ||
+				(deg > 56 && deg < 90);
 			bars.push({
 				x1: round(CENTER.x + Math.sin(rad) * r0),
 				y1: round(CENTER.y - Math.cos(rad) * r0),
 				x2: round(CENTER.x + Math.sin(rad) * (r0 + len)),
 				y2: round(CENTER.y - Math.cos(rad) * (r0 + len)),
 				hot,
-				width: round(range(rng, 5.5, 8.5)),
+				width: round(range(rng, 8, 12)),
 			});
 		}
 		return bars;
@@ -82,7 +86,7 @@ export function AikidoBurst({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 				</pattern>
 			</defs>
 
-			<rect width={1600} height={960} fill="#161615" />
+			<rect width={1600} height={960} fill="#1d1d1d" />
 			<rect width={1600} height={960} fill={`url(#${ids}-zeros)`} />
 
 			{/* faint halo behind the burst */}
@@ -103,28 +107,28 @@ export function AikidoBurst({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 						y1={b.y1}
 						x2={b.x2}
 						y2={b.y2}
-						stroke={b.hot ? AK.orange : "#3c3c3b"}
+						stroke={b.hot ? AK.orange : "#3a3a3a"}
 						strokeWidth={b.width}
 					/>
 				))}
 			</g>
 
 			{/* card */}
-			<rect x={526} y={340} width={504} height={216} rx={22} fill="#0c0c0b" />
+			<rect x={537} y={345} width={533} height={255} rx={20} fill="#191919" />
 			<g
 				fontFamily={FONT_SANS}
-				fontSize={52}
+				fontSize={55}
 				letterSpacing="-0.02em"
-				fill="#f4f2ee"
+				fill="#f7f6f4"
 				textAnchor="middle"
 			>
-				<text x={778} y={412}>
+				<text x={803} y={416}>
 					Pentests used to
 				</text>
-				<text x={778} y={473}>
+				<text x={803} y={484}>
 					take weeks. Yours
 				</text>
-				<text x={778} y={534}>
+				<text x={803} y={552}>
 					is done today.
 				</text>
 			</g>
@@ -135,7 +139,7 @@ export function AikidoBurst({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 				Blog / Attack
 			</text>
 			<text
-				x={1210}
+				x={1240}
 				y={79}
 				fontFamily={FONT_MONO}
 				fontSize={16}

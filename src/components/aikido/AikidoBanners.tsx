@@ -18,25 +18,29 @@ import {
 
 const SEED = 0x2b87;
 
-/** Dark panel: brick wall of code blocks. */
+const CARD_A = { x: 154, y: 135, w: 579, h: 689 };
+const CARD_B = { x: 766, y: 135, w: 678, h: 689 };
+
+/** Dark card: brick wall of code blocks. */
 function useBricks(rng: Rng) {
 	return useMemo(() => {
-		const blocks: { x: number; y: number; w: number }[] = [];
-		const left = 157;
-		const top = 141;
-		const width = 560;
-		const height = 665;
-		for (let row = 0; row * 44 < height; row++) {
-			const offset = row % 2 === 0 ? -30 : 18;
-			for (let x = offset; x < width; x += range(rng, 96, 118)) {
-				blocks.push({
+		const bricks: { x: number; y: number; w: number }[] = [];
+		const left = CARD_A.x + 6;
+		const top = CARD_A.y + 4;
+		const width = CARD_A.w - 12;
+		const height = CARD_A.h - 8;
+		const rowH = 34;
+		for (let row = 0; row * rowH < height; row++) {
+			const offset = row % 2 === 0 ? -52 : 4;
+			for (let x = offset; x < width; x += 100) {
+				bricks.push({
 					x: round(left + x),
-					y: round(top + 18 + row * 44),
-					w: round(range(rng, 74, 104)),
+					y: round(top + row * rowH + 5),
+					w: round(92 + range(rng, -6, 6)),
 				});
 			}
 		}
-		return blocks;
+		return bricks;
 	}, [rng]);
 }
 
@@ -44,35 +48,53 @@ function useBricks(rng: Rng) {
 function useConfetti(rng: Rng) {
 	return useMemo(() => {
 		const dots: { x: number; y: number; s: number }[] = [];
-		for (let i = 0; i < 210; i++) {
+		for (let i = 0; i < 190; i++) {
 			const a = rng() * Math.PI * 2;
 			const r = Math.sqrt(rng());
 			dots.push({
-				x: round(1015 + Math.cos(a) * r * 88),
-				y: round(410 + Math.sin(a) * r * 128),
-				s: round(range(rng, 6, 13)),
+				x: round(1066 + Math.cos(a) * r * 100),
+				y: round(447 + Math.sin(a) * r * 128),
+				s: round(range(rng, 6, 12)),
 			});
 		}
 		return dots;
 	}, [rng]);
 }
 
-/** Concentric arcs: the "code tunnel" of the dark panel. */
+/** Concentric arcs of the dark card: the "code tunnel". */
 function tunnelArcs() {
-	const arcs: { d: string; violet: boolean }[] = [];
-	const cx = 600;
-	const cy = 1150;
-	for (let i = 0; i < 20; i++) {
-		const r = 1010 - i * 40;
-		const a0 = (-172 * Math.PI) / 180;
-		const a1 = (-8 * Math.PI) / 180;
+	const arcs: { d: string; violet: boolean; offset: number }[] = [];
+	const cx = 462;
+	const cy = 1210;
+	for (let i = 0; i < 18; i++) {
+		const r = 1020 - i * 36;
+		const a0 = (-175 * Math.PI) / 180;
+		const a1 = (-5 * Math.PI) / 180;
 		const x0 = cx + r * Math.cos(a0);
 		const y0 = cy + r * Math.sin(a0);
 		const x1 = cx + r * Math.cos(a1);
 		const y1 = cy + r * Math.sin(a1);
 		arcs.push({
 			d: `M${round(x0)} ${round(y0)}A${r} ${r} 0 0 1 ${round(x1)} ${round(y1)}`,
-			violet: i >= 8 && i <= 13,
+			violet: i >= 9 && i <= 14,
+			offset: i * 23,
+		});
+	}
+	return arcs;
+}
+
+/** Pale brick rows of the light card, laid out along wide arcs. */
+function reviewArcs() {
+	const arcs: { d: string; width: number }[] = [];
+	const cx = 1040;
+	const cy = 1560;
+	for (let i = 0; i < 9; i++) {
+		const r = 780 + i * 56;
+		const a0 = (-168 * Math.PI) / 180;
+		const a1 = (-14 * Math.PI) / 180;
+		arcs.push({
+			d: `M${round(cx + r * Math.cos(a0))} ${round(cy + r * Math.sin(a0))}A${r} ${r} 0 0 1 ${round(cx + r * Math.cos(a1))} ${round(cy + r * Math.sin(a1))}`,
+			width: i % 2 === 0 ? 22 : 18,
 		});
 	}
 	return arcs;
@@ -91,13 +113,12 @@ function PanelLogo({
 	color: string;
 	wordSize: number;
 }) {
-	const w = h / (40 / 47);
 	return (
 		<g transform={`translate(${x} ${y})`}>
-			<path d={markPath(w)} fill={color} />
+			<path d={markPath(h)} fill={color} />
 			<text
-				x={w + 12}
-				y={h * 0.92}
+				x={h * (47 / 40) + 10}
+				y={h * 0.95}
 				fontFamily={FONT_SANS}
 				fontSize={wordSize}
 				fontWeight={700}
@@ -115,14 +136,10 @@ export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 	const bricks = useBricks(rng);
 	const confetti = useConfetti(rng);
 	const arcs = useMemo(tunnelArcs, []);
+	const rings = useMemo(reviewArcs, []);
 
 	const ids = "aikido-banners";
-	const clips = {
-		dark: `${ids}-dark`,
-		light: `${ids}-light`,
-		sphere: `${ids}-sphere`,
-		code: `${ids}-code`,
-	};
+	const clip = (name: string) => `url(#${ids}-${name})`;
 
 	return (
 		<svg
@@ -134,125 +151,124 @@ export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			aria-label="Two Aikido banners on an orange field"
 		>
 			<defs>
-				<clipPath id={clips.dark}>
-					<rect x={157} y={141} width={560} height={665} />
+				<clipPath id={`${ids}-dark`}>
+					<rect x={CARD_A.x} y={CARD_A.y} width={CARD_A.w} height={CARD_A.h} />
+				</clipPath>
+				<clipPath id={`${ids}-light`}>
+					<rect x={CARD_B.x} y={CARD_B.y} width={CARD_B.w} height={CARD_B.h} />
+				</clipPath>
+				<clipPath id={`${ids}-sphere`}>
+					<ellipse cx={1055} cy={447} rx={96} ry={130} />
+				</clipPath>
+				<clipPath id={`${ids}-code`}>
+					<rect x={1160} y={330} width={64} height={234} />
 				</clipPath>
 				<clipPath id={`${ids}-tunnel`}>
-					<rect x={157} y={141} width={560} height={560} />
-				</clipPath>
-				<clipPath id={clips.light}>
-					<rect x={746} y={149} width={810} height={649} />
-				</clipPath>
-				<clipPath id={clips.sphere}>
-					<ellipse cx={1015} cy={410} rx={90} ry={130} />
-				</clipPath>
-				<clipPath id={clips.code}>
-					<rect x={1072} y={300} width={38} height={224} />
+					<rect x={CARD_A.x} y={CARD_A.y} width={CARD_A.w} height={560} />
 				</clipPath>
 			</defs>
 
 			<rect width={1600} height={960} fill={AK.orange} />
 
-			{/* ── dark panel ───────────────────────────────────────────── */}
-			<g clipPath={`url(#${clips.dark})`}>
-				<rect x={157} y={141} width={560} height={665} fill="#1b1b1a" />
-				{bricks.map((b) => (
-					<rect
-						key={`${b.x}-${b.y}`}
-						x={b.x}
-						y={b.y}
-						width={b.w}
-						height={30}
-						rx={13}
-						fill="#262625"
-					/>
-				))}
+			{/* ── dark card ────────────────────────────────────────────── */}
+			<g clipPath={clip("dark")}>
+				<rect
+					x={CARD_A.x}
+					y={CARD_A.y}
+					width={CARD_A.w}
+					height={CARD_A.h}
+					fill={AK.night}
+				/>
+				<g fill="none" stroke="#2d2d2d" strokeWidth={1.6}>
+					{bricks.map((b) => (
+						<rect
+							key={`${b.x}-${b.y}`}
+							x={b.x}
+							y={b.y}
+							width={b.w}
+							height={27}
+							rx={13}
+						/>
+					))}
+				</g>
+
+				{/* the tunnel of dashed arcs */}
+				<g clipPath={clip("tunnel")}>
+					{arcs.map((arc) => (
+						<path
+							key={arc.d.slice(0, 22)}
+							d={arc.d}
+							fill="none"
+							stroke={arc.violet ? AK.violet : AK.yellow}
+							strokeWidth={12}
+							strokeDasharray="58 10"
+							strokeDashoffset={arc.offset}
+						/>
+					))}
+				</g>
 			</g>
 
-			{/* the tunnel of dashed arcs */}
-			<g clipPath={`url(#${ids}-tunnel)`}>
-				{arcs.map((arc) => (
-					<path
-						key={arc.d.slice(0, 22)}
-						d={arc.d}
-						fill="none"
-						stroke={arc.violet ? AK.violet : AK.yellow}
-						strokeWidth={12}
-						strokeDasharray="38 12"
-					/>
-				))}
-			</g>
-
-			{/* dark panel footer */}
-			<PanelLogo x={182} y={726} h={26} color={AK.paper} wordSize={25} />
-			<g fontFamily={FONT_SANS} fontSize={12.5} fill={AK.paper}>
-				<text x={330} y={736}>
+			{/* dark card footer */}
+			<PanelLogo x={182} y={732} h={26} color={AK.paper} wordSize={26} />
+			<g fontFamily={FONT_SANS} fontSize={15} fill={AK.paper}>
+				<text x={330} y={740}>
 					Secure your code,
 				</text>
-				<text x={330} y={753}>
+				<text x={330} y={761}>
 					cloud, and runtime in
 				</text>
-				<text x={330} y={770}>
+				<text x={330} y={782}>
 					one central system.
 				</text>
-				<text x={530} y={736}>
+				<text x={530} y={740}>
 					Find and fix vulnerabilities
 				</text>
-				<text x={530} y={753}>
+				<text x={530} y={761}>
 					fast automatically.
 				</text>
 			</g>
 
-			{/* ── light panel ──────────────────────────────────────────── */}
-			<g clipPath={`url(#${clips.light})`}>
-				<rect x={746} y={149} width={810} height={649} fill={AK.paper} />
-
-				{/* pale contour arcs */}
-				<g
-					fill="none"
-					stroke="#eae8e5"
-					strokeWidth={18}
-					strokeDasharray="52 18"
-				>
-					{Array.from({ length: 7 }, (_, i) => {
-						const r = 1080 - i * 52;
-						const cx = 640;
-						const cy = 1080;
-						const a0 = (-168 * Math.PI) / 180;
-						const a1 = (-12 * Math.PI) / 180;
-						return (
-							<path
-								key={r}
-								d={`M${round(cx + r * Math.cos(a0))} ${round(cy + r * Math.sin(a0))}A${r} ${r} 0 0 1 ${round(cx + r * Math.cos(a1))} ${round(cy + r * Math.sin(a1))}`}
-							/>
-						);
-					})}
-				</g>
-				<g fill="none" stroke="#dbd8d4" strokeWidth={1.6}>
-					<ellipse cx={880} cy={400} rx={150} ry={215} />
-					<ellipse cx={880} cy={400} rx={182} ry={250} />
-					<ellipse cx={1420} cy={410} rx={150} ry={215} />
-					<ellipse cx={1420} cy={410} rx={182} ry={250} />
-				</g>
-
-				{/* violet capsule behind the sphere */}
+			{/* ── light card ───────────────────────────────────────────── */}
+			<g clipPath={clip("light")}>
 				<rect
-					x={1002}
-					y={284}
-					width={112}
-					height={254}
-					rx={14}
-					fill={AK.violet}
+					x={CARD_B.x}
+					y={CARD_B.y}
+					width={CARD_B.w}
+					height={CARD_B.h}
+					fill={AK.paper}
 				/>
+
+				{/* pale brick rows */}
+				<g fill="none" stroke="#e8e8e6" strokeDasharray="56 11">
+					{rings.map((ring) => (
+						<path
+							key={ring.d.slice(0, 30)}
+							d={ring.d}
+							strokeWidth={ring.width}
+						/>
+					))}
+				</g>
+
+				{/* capsule outlines at both edges */}
+				<g fill="none" stroke="#cfcfcd" strokeWidth={1.6}>
+					<ellipse cx={752} cy={420} rx={86} ry={206} />
+					<ellipse cx={746} cy={420} rx={120} ry={232} />
+					<ellipse cx={1462} cy={420} rx={86} ry={206} />
+					<ellipse cx={1468} cy={420} rx={120} ry={232} />
+				</g>
 			</g>
 
 			{/* aikido wordmark */}
-			<PanelLogo x={1000} y={176} h={30} color={AK.ink} wordSize={30} />
+			<PanelLogo x={1005} y={183} h={32} color={AK.ink} wordSize={38} />
 
 			{/* the filtered sphere */}
 			<g>
-				<ellipse cx={1015} cy={410} rx={90} ry={130} fill={AK.yellow} />
-				<g clipPath={`url(#${clips.sphere})`}>
+				{/* violet capsules above and below */}
+				<rect x={1040} y={291} width={106} height={30} fill={AK.violet} />
+				<rect x={1040} y={573} width={106} height={30} fill={AK.violet} />
+
+				<ellipse cx={1055} cy={447} rx={96} ry={130} fill={AK.yellow} />
+				<g clipPath={clip("sphere")}>
 					{confetti.map((d) => (
 						<rect
 							key={`${d.x}-${d.y}`}
@@ -263,102 +279,95 @@ export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 							fill={AK.blue}
 						/>
 					))}
-				</g>
-				{/* violet filter covering the right side */}
-				<path
-					d="M1032 280a94 132 0 0 1 0 260z"
-					fill={AK.violet}
-					opacity={0.96}
-				/>
-				{/* shipped code strip */}
-				<g clipPath={`url(#${clips.code})`}>
-					<rect x={1072} y={300} width={44} height={224} fill={AK.green} />
-					<g
-						fontFamily={FONT_MONO}
-						fontSize={15}
-						fill="#0a6b4c"
-						textAnchor="middle"
-					>
-						<text x={1094} y={322}>
-							2
-						</text>
-						<text x={1094} y={352}>
-							2
-						</text>
-						<text x={1094} y={382}>
-							2
-						</text>
-						<text x={1094} y={412}>
-							202
-						</text>
-						<text x={1094} y={442}>
-							202
-						</text>
-						<text x={1094} y={472}>
-							202
-						</text>
-						<text x={1094} y={502}>
-							2
-						</text>
+					{/* beach-ball seams */}
+					<g fill="none" stroke="#e9e9e7" strokeWidth={2}>
+						<path d="M1010 320a120 128 0 0 1 0 258" />
+						<path d="M1052 316a112 131 0 0 1 0 262" />
+					</g>
+					{/* violet filter over the right third */}
+					<path
+						d="M1100 320a112 127 0 0 1 0 254l40 0 0-254z"
+						fill={AK.violet}
+					/>
+					{/* shipped code strip */}
+					<g clipPath={clip("code")}>
+						<rect x={1160} y={330} width={56} height={234} fill={AK.green} />
 					</g>
 				</g>
 				<ellipse
-					cx={1015}
-					cy={410}
-					rx={90}
+					cx={1055}
+					cy={447}
+					rx={96}
 					ry={130}
 					fill="none"
-					stroke="#e2ded9"
-					strokeWidth={2}
+					stroke="#d2d2d0"
+					strokeWidth={1.6}
 				/>
+				<g
+					fontFamily={FONT_MONO}
+					fontSize={17}
+					fill="#0a5c3e"
+					textAnchor="middle"
+				>
+					{[-2, 20, 202].map((label, i) => (
+						<text key={label} x={1194} y={360 + i * 30}>
+							{label}
+						</text>
+					))}
+					{[-2, 202, 20].map((label, i) => (
+						<text key={`b${label}`} x={1194} y={470 + i * 30}>
+							{label}
+						</text>
+					))}
+				</g>
 			</g>
 
 			{/* callouts */}
 			<g
 				fontFamily={FONT_MONO}
-				fontSize={14}
+				fontSize={17}
 				fill={AK.ink}
-				letterSpacing="0.04em"
+				letterSpacing="0.03em"
 			>
-				<rect x={824} y={322} width={11} height={11} fill={AK.orange} />
-				<text x={844} y={333}>
+				<rect x={862} y={316} width={12} height={12} fill={AK.orange} />
+				<text x={884} y={329}>
 					BUGS FOUND
 				</text>
 				<path
-					d="M880 338v52h42"
+					d="M900 336v56h46"
 					fill="none"
 					stroke={AK.ink}
-					strokeWidth={1.4}
+					strokeWidth={1.6}
 				/>
-				<rect x={1204} y={556} width={11} height={11} fill={AK.orange} />
-				<text x={1224} y={567}>
+				<rect x={1256} y={557} width={12} height={12} fill={AK.orange} />
+				<text x={1278} y={570}>
 					SHIPPED CODE
 				</text>
 				<path
-					d="M1210 548v-28h-92"
+					d="M1262 553v-38h-58"
 					fill="none"
 					stroke={AK.ink}
-					strokeWidth={1.4}
+					strokeWidth={1.6}
 				/>
 			</g>
 
 			{/* caption */}
-			<g fontFamily={FONT_MONO} textAnchor="middle">
-				<text
-					x={1151}
-					y={735}
-					fontSize={15}
-					letterSpacing="0.16em"
-					fill={AK.ink}
-				>
-					DEEP PR REVIEW
-				</text>
-			</g>
 			<text
-				x={1151}
-				y={762}
+				x={1106}
+				y={757}
+				fontFamily={FONT_MONO}
+				fontSize={19}
+				letterSpacing="0.14em"
+				fill={AK.ink}
+				textAnchor="middle"
+			>
+				DEEP PR REVIEW
+			</text>
+			<text
+				x={1106}
+				y={789}
 				fontFamily={FONT_SANS}
-				fontSize={17}
+				fontSize={19}
 				fill="#8b8884"
 				textAnchor="middle"
 			>

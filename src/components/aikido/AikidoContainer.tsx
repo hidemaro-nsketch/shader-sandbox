@@ -253,13 +253,13 @@ export function AikidoContainer({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			<Lock p={iso(N, 9.2, 1.1)} scale={0.86} />
 
 			{/* wordmark */}
-			<g transform="translate(700 76)">
-				<path d={markPath(44)} fill={AK.paper} />
+			<g transform="translate(686 74)">
+				<path d={markPath(58)} fill={AK.paper} />
 				<text
-					x={56}
-					y={40}
+					x={78}
+					y={55}
 					fontFamily={FONT_SANS}
-					fontSize={42}
+					fontSize={56}
 					fontWeight={700}
 					letterSpacing="-0.02em"
 					fill={AK.paper}
@@ -271,15 +271,15 @@ export function AikidoContainer({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			{/* side labels */}
 			<g
 				fontFamily={FONT_SANS}
-				fontSize={64}
+				fontSize={76}
 				fontWeight={400}
-				letterSpacing="-0.02em"
+				letterSpacing="-0.03em"
 				fill={AK.paper}
 			>
-				<text x={96} y={512}>
+				<text x={142} y={510}>
 					Container
 				</text>
-				<text x={1198} y={512}>
+				<text x={1448} y={510} textAnchor="end">
 					Security
 				</text>
 			</g>
@@ -287,21 +287,21 @@ export function AikidoContainer({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			{/* caption + button */}
 			<g
 				fontFamily={FONT_SANS}
-				fontSize={24}
+				fontSize={22}
 				fill="#e6e4e0"
 				textAnchor="middle"
 			>
-				<text x={800} y={770}>
+				<text x={806} y={810}>
 					Scan your container operating system
 				</text>
-				<text x={800} y={800}>
+				<text x={806} y={840}>
 					for packages with security issues.
 				</text>
 			</g>
-			<rect x={648} y={838} width={304} height={44} rx={6} fill="#2e2e2d" />
+			<rect x={652} y={862} width={304} height={44} rx={6} fill="#2e2e2d" />
 			<text
-				x={778}
-				y={866}
+				x={782}
+				y={890}
 				fontFamily={FONT_MONO}
 				fontSize={13}
 				letterSpacing="0.1em"
@@ -311,7 +311,7 @@ export function AikidoContainer({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 				AUTOFIX FOR CONTAINERS
 			</text>
 			<path
-				d="M886 855l5 5-5 5"
+				d="M890 879l5 5-5 5"
 				fill="none"
 				stroke="#dcdad6"
 				strokeWidth={1.6}
