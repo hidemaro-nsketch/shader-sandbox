@@ -4,8 +4,6 @@ import {
 	type Cloud,
 	cloudShape,
 	createRng,
-	FONT_MONO,
-	FONT_SANS,
 	markPath,
 	type Rng,
 	round,
@@ -198,54 +196,11 @@ export function AikidoReviews({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 					fill={`url(#${ids}-greenhatch)`}
 				/>
 			</g>
-			<g fontFamily={FONT_MONO} fill="#0b5c3d">
-				<text x={700} y={858} fontSize={24}>
-					{"+++++++[ ////////////////// ]"}
-				</text>
-				<text x={840} y={900} fontSize={20}>
-					01010101
-				</text>
-				<text x={700} y={940} fontSize={24}>
-					{"++++++++[ ///////////////////// ]"}
-				</text>
-				<text x={905} y={900} fontSize={30} fill="#0a4d33">
-					{"01010101/////"}
-				</text>
-			</g>
 			<rect x={1113} y={800} width={13} height={160} fill="#e2450f" />
 
-			{/* logo + headline */}
+			{/* logo */}
 			<g transform="translate(704 274)">
 				<path d={markPath(45)} fill={AK.ink} />
-				<text
-					x={63}
-					y={45}
-					fontFamily={FONT_SANS}
-					fontSize={44}
-					fontWeight={700}
-					letterSpacing="-0.02em"
-					fill={AK.ink}
-				>
-					aikido
-				</text>
-			</g>
-			<g
-				fontFamily={FONT_SANS}
-				fontSize={69.5}
-				fontWeight={500}
-				letterSpacing="-0.025em"
-				fill={AK.ink}
-				textAnchor="middle"
-			>
-				<text x={803} y={409}>
-					Code reviews that fix
-				</text>
-				<text x={803} y={489}>
-					your code, not just
-				</text>
-				<text x={803} y={569}>
-					comment on it.
-				</text>
 			</g>
 		</svg>
 	);

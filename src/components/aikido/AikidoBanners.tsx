@@ -2,8 +2,6 @@ import { type Ref, useMemo } from "react";
 import {
 	AK,
 	createRng,
-	FONT_MONO,
-	FONT_SANS,
 	markPath,
 	type Rng,
 	range,
@@ -108,28 +106,15 @@ function PanelLogo({
 	y,
 	h,
 	color,
-	wordSize,
 }: {
 	x: number;
 	y: number;
 	h: number;
 	color: string;
-	wordSize: number;
 }) {
 	return (
 		<g transform={`translate(${x} ${y})`}>
 			<path d={markPath(h)} fill={color} />
-			<text
-				x={h * (47 / 40) + 10}
-				y={h * 0.95}
-				fontFamily={FONT_SANS}
-				fontSize={wordSize}
-				fontWeight={700}
-				letterSpacing="-0.02em"
-				fill={color}
-			>
-				aikido
-			</text>
 		</g>
 	);
 }
@@ -223,24 +208,7 @@ export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			</g>
 
 			{/* dark card footer */}
-			<PanelLogo x={182} y={732} h={26} color={AK.paper} wordSize={26} />
-			<g fontFamily={FONT_SANS} fontSize={15} fill={AK.paper}>
-				<text x={330} y={740}>
-					Secure your code,
-				</text>
-				<text x={330} y={761}>
-					cloud, and runtime in
-				</text>
-				<text x={330} y={782}>
-					one central system.
-				</text>
-				<text x={530} y={740}>
-					Find and fix vulnerabilities
-				</text>
-				<text x={530} y={761}>
-					fast automatically.
-				</text>
-			</g>
+			<PanelLogo x={182} y={732} h={26} color={AK.paper} />
 
 			{/* ── light card ───────────────────────────────────────────── */}
 			<g clipPath={clip("light")}>
@@ -273,7 +241,7 @@ export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			</g>
 
 			{/* aikido wordmark */}
-			<PanelLogo x={1005} y={183} h={32} color={AK.ink} wordSize={38} />
+			<PanelLogo x={1005} y={183} h={32} color={AK.ink} />
 
 			{/* the filtered sphere */}
 			<g>
@@ -317,36 +285,11 @@ export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 					stroke="#d2d2d0"
 					strokeWidth={1.6}
 				/>
-				<g
-					fontFamily={FONT_MONO}
-					fontSize={17}
-					fill="#0a5c3e"
-					textAnchor="middle"
-				>
-					{[-2, 20, 202].map((label, i) => (
-						<text key={label} x={1194} y={360 + i * 30}>
-							{label}
-						</text>
-					))}
-					{[-2, 202, 20].map((label, i) => (
-						<text key={`b${label}`} x={1194} y={470 + i * 30}>
-							{label}
-						</text>
-					))}
-				</g>
 			</g>
 
 			{/* callouts */}
-			<g
-				fontFamily={FONT_MONO}
-				fontSize={17}
-				fill={AK.ink}
-				letterSpacing="0.03em"
-			>
+			<g>
 				<rect x={862} y={316} width={12} height={12} fill={AK.orange} />
-				<text x={884} y={329}>
-					BUGS FOUND
-				</text>
 				<path
 					d="M900 336v56h46"
 					fill="none"
@@ -354,9 +297,6 @@ export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 					strokeWidth={1.6}
 				/>
 				<rect x={1256} y={557} width={12} height={12} fill={AK.orange} />
-				<text x={1278} y={570}>
-					SHIPPED CODE
-				</text>
 				<path
 					d="M1262 553v-38h-58"
 					fill="none"
@@ -366,27 +306,6 @@ export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			</g>
 
 			{/* caption */}
-			<text
-				x={1106}
-				y={757}
-				fontFamily={FONT_MONO}
-				fontSize={19}
-				letterSpacing="0.14em"
-				fill={AK.ink}
-				textAnchor="middle"
-			>
-				DEEP PR REVIEW
-			</text>
-			<text
-				x={1106}
-				y={789}
-				fontFamily={FONT_SANS}
-				fontSize={19}
-				fill="#8b8884"
-				textAnchor="middle"
-			>
-				Only finds bugs that are relevant
-			</text>
 		</svg>
 	);
 }

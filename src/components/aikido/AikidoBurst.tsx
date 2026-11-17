@@ -1,13 +1,5 @@
 import { type Ref, useMemo } from "react";
-import {
-	AK,
-	createRng,
-	FONT_MONO,
-	FONT_SANS,
-	type Rng,
-	range,
-	round,
-} from "../../util/aikido";
+import { AK, createRng, type Rng, range, round } from "../../util/aikido";
 
 /**
  * Panel 6 — blog hero: a radial burst of grey bars around a black card, with
@@ -69,25 +61,24 @@ export function AikidoBurst({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 		>
 			<defs>
 				<pattern
-					id={`${ids}-zeros`}
+					id={`${ids}-grain`}
 					width={26}
 					height={26}
 					patternUnits="userSpaceOnUse"
 				>
-					<text
-						x={3}
-						y={18}
-						fontFamily={FONT_MONO}
-						fontSize={13}
-						fill="#242423"
-					>
-						0
-					</text>
+					<circle
+						cx={13}
+						cy={13}
+						r={2.6}
+						fill="none"
+						stroke="#262626"
+						strokeWidth={1.4}
+					/>
 				</pattern>
 			</defs>
 
 			<rect width={1600} height={960} fill="#1d1d1d" />
-			<rect width={1600} height={960} fill={`url(#${ids}-zeros)`} />
+			<rect width={1600} height={960} fill={`url(#${ids}-grain)`} />
 
 			{/* faint halo behind the burst */}
 			<circle
@@ -116,39 +107,9 @@ export function AikidoBurst({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 
 			{/* card */}
 			<rect x={537} y={345} width={533} height={255} rx={20} fill="#191919" />
-			<g
-				fontFamily={FONT_SANS}
-				fontSize={55}
-				letterSpacing="-0.02em"
-				fill="#f7f6f4"
-				textAnchor="middle"
-			>
-				<text x={803} y={416}>
-					Pentests used to
-				</text>
-				<text x={803} y={484}>
-					take weeks. Yours
-				</text>
-				<text x={803} y={552}>
-					is done today.
-				</text>
-			</g>
 
 			{/* masthead */}
 			<rect x={365} y={52} width={212} height={40} rx={8} fill="#242423" />
-			<text x={382} y={79} fontFamily={FONT_MONO} fontSize={16} fill="#dedcd8">
-				Blog / Attack
-			</text>
-			<text
-				x={1240}
-				y={79}
-				fontFamily={FONT_MONO}
-				fontSize={16}
-				fill="#cfcdc9"
-				textAnchor="end"
-			>
-				Nov 2, 2026
-			</text>
 		</svg>
 	);
 }

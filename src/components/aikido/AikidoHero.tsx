@@ -6,7 +6,6 @@ import {
 	chevron,
 	cloudShape,
 	createRng,
-	FONT_SANS,
 	markPath,
 	type Rng,
 	range,
@@ -195,68 +194,34 @@ function Card() {
 				stroke={AK.hairline}
 				strokeWidth={1.4}
 			/>
-			<text
-				x={731}
-				y={590}
-				fontFamily={FONT_SANS}
-				fontSize={12.5}
-				fill={AK.inkSoft}
-			>
-				All Teams
-			</text>
 			<path
 				d={chevron(806, 585, 9, "d")}
 				fill="none"
 				stroke={AK.inkSoft}
 				strokeWidth={1.4}
 			/>
-			<g
-				fontFamily={FONT_SANS}
-				fontSize={12.5}
-				fill="#8b8884"
-				letterSpacing="0.01em"
-			>
+			<g>
 				<path
 					d="M838 582l4 4-4 4"
 					fill="none"
 					stroke="#b0ada9"
 					strokeWidth={1.6}
 				/>
-				<text x={852} y={590}>
-					Pentest
-				</text>
 				<path
 					d="M910 582l4 4-4 4"
 					fill="none"
 					stroke="#b0ada9"
 					strokeWidth={1.6}
 				/>
-				<text x={924} y={590}>
-					Project
-				</text>
 				<path
 					d="M988 582l4 4-4 4"
 					fill="none"
 					stroke="#b0ada9"
 					strokeWidth={1.6}
 				/>
-				<text x={1002} y={590}>
-					Pentest Detail
-				</text>
 			</g>
 
 			{/* title + tabs */}
-			<text
-				x={716}
-				y={650}
-				fontFamily={FONT_SANS}
-				fontSize={30}
-				fontWeight={500}
-				fill={AK.ink}
-				letterSpacing="-0.01em"
-			>
-				Pentest of multi-tenant SaaS application
-			</text>
 			<line
 				x1={696}
 				y1={672}
@@ -267,38 +232,17 @@ function Card() {
 			/>
 			{tabs.map((tab) => (
 				<g key={tab.label}>
-					<text
-						x={tab.x}
-						y={702}
-						fontFamily={FONT_SANS}
-						fontSize={14}
-						fill={tab.active ? AK.ink : "#8b8884"}
-						fontWeight={tab.active ? 500 : 400}
-					>
-						{tab.label}
-					</text>
 					{tab.count && tab.pill !== undefined && (
-						<>
-							<rect
-								x={tab.pill}
-								y={690}
-								width={tab.count.length > 1 ? 24 : 19}
-								height={17}
-								rx={8.5}
-								fill="none"
-								stroke={AK.hairline}
-								strokeWidth={1.2}
-							/>
-							<text
-								x={tab.pill + (tab.count.length > 1 ? 6 : 7)}
-								y={702}
-								fontFamily={FONT_SANS}
-								fontSize={10.5}
-								fill="#8b8884"
-							>
-								{tab.count}
-							</text>
-						</>
+						<rect
+							x={tab.pill}
+							y={690}
+							width={tab.count.length > 1 ? 24 : 19}
+							height={17}
+							rx={8.5}
+							fill="none"
+							stroke={AK.hairline}
+							strokeWidth={1.2}
+						/>
 					)}
 					{tab.active && (
 						<line
@@ -344,12 +288,6 @@ function Card() {
 				strokeWidth={1.6}
 				strokeDasharray="14 40"
 			/>
-			<text x={808} y={782} fontFamily={FONT_SANS} fontSize={16} fill={AK.ink}>
-				Running
-			</text>
-			<text x={808} y={802} fontFamily={FONT_SANS} fontSize={13} fill="#8b8884">
-				3h 3m
-			</text>
 
 			{/* stepper */}
 			<line
@@ -378,17 +316,6 @@ function Card() {
 					/>
 				</g>
 			))}
-			<g fontFamily={FONT_SANS} fontSize={13} fill="#6f6c69">
-				<text x={758} y={922}>
-					Preflight
-				</text>
-				<text x={1140} y={922}>
-					Discovery
-				</text>
-				<text x={1486} y={922}>
-					Pentesting
-				</text>
-			</g>
 		</g>
 	);
 }
@@ -474,53 +401,7 @@ export function AikidoHero({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			{/* header */}
 			<g>
 				<AikidoMark x={58} y={42} h={34} />
-				<text
-					x={132}
-					y={72}
-					fontFamily={FONT_SANS}
-					fontSize={31}
-					fontWeight={700}
-					letterSpacing="-0.02em"
-					fill={AK.ink}
-				>
-					aikido
-				</text>
-
-				<g fontFamily={FONT_SANS} fontSize={20} fill={AK.ink}>
-					{[
-						["Products", 500],
-						["Solutions", 600],
-						["Resources", 700],
-						["About", 810],
-						["Pricing", 876],
-						["Contact", 952],
-					].map(([label, x]) => (
-						<text key={label} x={x as number} y={62}>
-							{label}
-						</text>
-					))}
-				</g>
-				<text
-					x={1272}
-					y={69}
-					fontFamily={FONT_SANS}
-					fontSize={16}
-					letterSpacing="0.02em"
-					fill={AK.ink}
-				>
-					LOG IN
-				</text>
 				<rect x={1364} y={42} width={162} height={40} fill={AK.ink} />
-				<text
-					x={1382}
-					y={68}
-					fontFamily={FONT_SANS}
-					fontSize={15}
-					letterSpacing="0.03em"
-					fill={AK.white}
-				>
-					START FREE
-				</text>
 				<path
 					d={`M1496 62h10m-4-4 4 4-4 4`}
 					fill="none"
@@ -529,36 +410,6 @@ export function AikidoHero({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 				/>
 
 				{/* headline */}
-				<g
-					fontFamily={FONT_SANS}
-					fontSize={55.5}
-					fontWeight={500}
-					letterSpacing="-0.025em"
-					fill={AK.ink}
-				>
-					<text x={55} y={207}>
-						Protect all that
-					</text>
-					<text x={55} y={264}>
-						developers create,
-					</text>
-					<text x={55} y={321}>
-						deploy, and manage.
-					</text>
-				</g>
-
-				{/* right column copy */}
-				<g fontFamily={FONT_SANS} fontSize={19} fill={AK.ink}>
-					<text x={1093} y={186}>
-						Autonomously attack your running applications,
-					</text>
-					<text x={1093} y={209}>
-						APIs and infrastructure to prove what’s actually
-					</text>
-					<text x={1093} y={232}>
-						exploitable, before others do.
-					</text>
-				</g>
 				<rect
 					x={1093}
 					y={264}
@@ -568,16 +419,6 @@ export function AikidoHero({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 					stroke={AK.ink}
 					strokeWidth={1.6}
 				/>
-				<text
-					x={1109}
-					y={287}
-					fontFamily={FONT_SANS}
-					fontSize={14}
-					letterSpacing="0.03em"
-					fill={AK.ink}
-				>
-					START FREE
-				</text>
 				<path
 					d="M1201 281h9m-3.6-3.6 3.6 3.6-3.6 3.6"
 					fill="none"
