@@ -10,6 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AikidoBannersRouteImport } from './routes/aikido-banners'
+import { Route as AikidoBurstRouteImport } from './routes/aikido-burst'
+import { Route as AikidoContainerRouteImport } from './routes/aikido-container'
+import { Route as AikidoHeroRouteImport } from './routes/aikido-hero'
+import { Route as AikidoPentestRouteImport } from './routes/aikido-pentest'
+import { Route as AikidoReviewsRouteImport } from './routes/aikido-reviews'
 import { Route as BasicRouteImport } from './routes/basic'
 import { Route as HalftoneRouteImport } from './routes/halftone'
 import { Route as HandoffRouteImport } from './routes/handoff'
@@ -20,6 +26,36 @@ import { Route as WireframeRouteImport } from './routes/wireframe'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AikidoBannersRoute = AikidoBannersRouteImport.update({
+  id: '/aikido-banners',
+  path: '/aikido-banners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AikidoBurstRoute = AikidoBurstRouteImport.update({
+  id: '/aikido-burst',
+  path: '/aikido-burst',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AikidoContainerRoute = AikidoContainerRouteImport.update({
+  id: '/aikido-container',
+  path: '/aikido-container',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AikidoHeroRoute = AikidoHeroRouteImport.update({
+  id: '/aikido-hero',
+  path: '/aikido-hero',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AikidoPentestRoute = AikidoPentestRouteImport.update({
+  id: '/aikido-pentest',
+  path: '/aikido-pentest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AikidoReviewsRoute = AikidoReviewsRouteImport.update({
+  id: '/aikido-reviews',
+  path: '/aikido-reviews',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BasicRoute = BasicRouteImport.update({
@@ -55,6 +91,12 @@ const WireframeRoute = WireframeRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aikido-banners': typeof AikidoBannersRoute
+  '/aikido-burst': typeof AikidoBurstRoute
+  '/aikido-container': typeof AikidoContainerRoute
+  '/aikido-hero': typeof AikidoHeroRoute
+  '/aikido-pentest': typeof AikidoPentestRoute
+  '/aikido-reviews': typeof AikidoReviewsRoute
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
   '/handoff': typeof HandoffRoute
@@ -64,6 +106,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aikido-banners': typeof AikidoBannersRoute
+  '/aikido-burst': typeof AikidoBurstRoute
+  '/aikido-container': typeof AikidoContainerRoute
+  '/aikido-hero': typeof AikidoHeroRoute
+  '/aikido-pentest': typeof AikidoPentestRoute
+  '/aikido-reviews': typeof AikidoReviewsRoute
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
   '/handoff': typeof HandoffRoute
@@ -74,6 +122,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aikido-banners': typeof AikidoBannersRoute
+  '/aikido-burst': typeof AikidoBurstRoute
+  '/aikido-container': typeof AikidoContainerRoute
+  '/aikido-hero': typeof AikidoHeroRoute
+  '/aikido-pentest': typeof AikidoPentestRoute
+  '/aikido-reviews': typeof AikidoReviewsRoute
   '/basic': typeof BasicRoute
   '/halftone': typeof HalftoneRoute
   '/handoff': typeof HandoffRoute
@@ -85,6 +139,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/aikido-banners'
+    | '/aikido-burst'
+    | '/aikido-container'
+    | '/aikido-hero'
+    | '/aikido-pentest'
+    | '/aikido-reviews'
     | '/basic'
     | '/halftone'
     | '/handoff'
@@ -94,6 +154,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/aikido-banners'
+    | '/aikido-burst'
+    | '/aikido-container'
+    | '/aikido-hero'
+    | '/aikido-pentest'
+    | '/aikido-reviews'
     | '/basic'
     | '/halftone'
     | '/handoff'
@@ -103,6 +169,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/aikido-banners'
+    | '/aikido-burst'
+    | '/aikido-container'
+    | '/aikido-hero'
+    | '/aikido-pentest'
+    | '/aikido-reviews'
     | '/basic'
     | '/halftone'
     | '/handoff'
@@ -113,6 +185,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AikidoBannersRoute: typeof AikidoBannersRoute
+  AikidoBurstRoute: typeof AikidoBurstRoute
+  AikidoContainerRoute: typeof AikidoContainerRoute
+  AikidoHeroRoute: typeof AikidoHeroRoute
+  AikidoPentestRoute: typeof AikidoPentestRoute
+  AikidoReviewsRoute: typeof AikidoReviewsRoute
   BasicRoute: typeof BasicRoute
   HalftoneRoute: typeof HalftoneRoute
   HandoffRoute: typeof HandoffRoute
@@ -128,6 +206,48 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aikido-banners': {
+      id: '/aikido-banners'
+      path: '/aikido-banners'
+      fullPath: '/aikido-banners'
+      preLoaderRoute: typeof AikidoBannersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aikido-burst': {
+      id: '/aikido-burst'
+      path: '/aikido-burst'
+      fullPath: '/aikido-burst'
+      preLoaderRoute: typeof AikidoBurstRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aikido-container': {
+      id: '/aikido-container'
+      path: '/aikido-container'
+      fullPath: '/aikido-container'
+      preLoaderRoute: typeof AikidoContainerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aikido-hero': {
+      id: '/aikido-hero'
+      path: '/aikido-hero'
+      fullPath: '/aikido-hero'
+      preLoaderRoute: typeof AikidoHeroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aikido-pentest': {
+      id: '/aikido-pentest'
+      path: '/aikido-pentest'
+      fullPath: '/aikido-pentest'
+      preLoaderRoute: typeof AikidoPentestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aikido-reviews': {
+      id: '/aikido-reviews'
+      path: '/aikido-reviews'
+      fullPath: '/aikido-reviews'
+      preLoaderRoute: typeof AikidoReviewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/basic': {
@@ -177,6 +297,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AikidoBannersRoute: AikidoBannersRoute,
+  AikidoBurstRoute: AikidoBurstRoute,
+  AikidoContainerRoute: AikidoContainerRoute,
+  AikidoHeroRoute: AikidoHeroRoute,
+  AikidoPentestRoute: AikidoPentestRoute,
+  AikidoReviewsRoute: AikidoReviewsRoute,
   BasicRoute: BasicRoute,
   HalftoneRoute: HalftoneRoute,
   HandoffRoute: HandoffRoute,

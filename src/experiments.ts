@@ -9,6 +9,12 @@
 export type Experiment = {
 	/** Route path of the experiment (must exist in `src/routes`). */
 	to:
+		| "/aikido-banners"
+		| "/aikido-burst"
+		| "/aikido-container"
+		| "/aikido-hero"
+		| "/aikido-pentest"
+		| "/aikido-reviews"
 		| "/halftone"
 		| "/handoff"
 		| "/paper-chain"
@@ -22,6 +28,42 @@ export type Experiment = {
 };
 
 export const experiments: readonly Experiment[] = [
+	{
+		to: "/aikido-hero",
+		title: "Aikido Hero",
+		preview: "/previews/aikido-hero.webp",
+		tags: ["brand", "landing"],
+	},
+	{
+		to: "/aikido-banners",
+		title: "Aikido Banners",
+		preview: "/previews/aikido-banners.webp",
+		tags: ["brand", "banner"],
+	},
+	{
+		to: "/aikido-container",
+		title: "Container × Security",
+		preview: "/previews/aikido-container.webp",
+		tags: ["brand", "isometric"],
+	},
+	{
+		to: "/aikido-reviews",
+		title: "Code Reviews",
+		preview: "/previews/aikido-reviews.webp",
+		tags: ["brand", "poster"],
+	},
+	{
+		to: "/aikido-pentest",
+		title: "Agentic Pentesting",
+		preview: "/previews/aikido-pentest.webp",
+		tags: ["brand", "card"],
+	},
+	{
+		to: "/aikido-burst",
+		title: "Attack Burst",
+		preview: "/previews/aikido-burst.webp",
+		tags: ["brand", "burst"],
+	},
 	{
 		to: "/halftone",
 		title: "Halftone",

@@ -52,6 +52,12 @@ VERCEL=1 pnpm build   # .vercel/output が生成される
 | `/paper-chain` | 切り絵風の人間チェーン・ポスター生成。シードごとに図形・ピクセルパッチ・注釈ラベルが変わる（PNG 書き出し可） |
 | `/surface-plots` | ワイヤーフレームの3Dサーフェス（年 × 国 × 値）を並べたデータビズ風ポスター。ミント色の投影ウォール付き（PNG 書き出し可） |
 | `/wireframe` | CAD風のワイヤーフレーム・トーラス。透過ハウジング、床グリッド、mm寸法線、発光するハブパーツ |
+| `/aikido-hero` | ブランド系ヒーロー。街並みのスカイラインと紫のデータバーの上に、ペンテストのプロダクトカードが重なる（パネルなし） |
+| `/aikido-banners` | 広告バナー2枚（暗いバグ柄と明るい PR レビューのカード）を並べた 1600×960 のアートボード |
+| `/aikido-container` | アイソメトリックな立方体をコンテナに見立て、オレンジのスキャン枠と黄色い寸法線を添えた Container × Security の絵 |
+| `/aikido-reviews` | 層状の丘とハッチ・網点を重ねたコードレビュー用タイポポスター。"Code reviews that fix your code" |
+| `/aikido-pentest` | 扇状に広がる紫とオレンジの攻撃ストロークで「Pentest everything you ship」を組んだカード |
+| `/aikido-burst` | 放射状のバーストの中心に引用カードを置いたブログ用ビジュアル |
 
 ## 構成
 
@@ -65,14 +71,16 @@ src/
     paper-chain.tsx           # 切り絵ポスター生成ページ
     surface-plots.tsx         # サーフェスプロットポスター生成ページ
     wireframe.tsx             # CAD風ワイヤーフレームページ
+    aikido-*.tsx              # ブランド系アートワーク6種（パネルなしの絵だけページ）
   components/
-    ui/Controls.tsx           # 白黒の共通UIキット（レイアウト・パネル・スライダー等）
+    ui/Controls.tsx           # 白黒の共通UIキット（レイアウト・パネル・スライダー・絵だけ用の ArtworkStage 等）
     ShaderCanvas.tsx          # 共通キャンバス（レンダラ初期化・正射影カメラ・戻るリンク）
     HalftoneControls.tsx      # ハーフトーンのパラメータパネル
     HandoffTower.tsx          # ハンドオフ・タワーの SVG レンダラ
     PaperPoster.tsx           # 切り絵ポスターの SVG レンダラ
     SurfacePlotPoster.tsx     # サーフェスプロットポスターの SVG レンダラ
     WireframeTorus.tsx        # CAD風ワイヤーフレームの SVG レンダラ
+    aikido/Aikido*.tsx        # ブランド系アートワークの SVG レンダラ（6種）
   util/
     halftone.ts               # ハーフトーンの TSL ノードグラフ
     paperPoster.ts            # ポスターのレイアウト生成（シード RNG）
@@ -80,6 +88,7 @@ src/
     handoffTower.ts           # タワーのレイアウト生成（シード RNG）
     wireframeTorus.ts         # トーラス/シリンダのワイヤー生成と透視投影
     shader.ts                 # TSL の小道具（アスペクト補正 UV など）
+    aikido.ts                 # ブランド系アートワークの共通定数・RNG・雲/マークの形
     webgpu-polyfill.ts        # WebGPU 非対応環境向けポリフィル（必ず最初に import）
 public/                       # 実験で使う画像などの素材
 ```
@@ -108,6 +117,16 @@ public/                       # 実験で使う画像などの素材
 
    ページの外枠・黒枠・コントロール類は `components/ui/Controls.tsx` の白黒UIキットに揃える
    （`ExperimentLayout` / `Stage` / `Frame` / `Panel` / `Slider` / `Toggle` / `Segmented` / `ActionButton`）。
+   パネルを持たない「絵だけ」のページは、`Stage` の代わりに `ArtworkStage` を使うと
+   左上に戻りリンクだけが出る。
+
+   ```tsx
+   <ExperimentLayout>
+     <ArtworkStage>
+       <Frame ratio={16 / 9}>{/* 絵 */}</Frame>
+     </ArtworkStage>
+   </ExperimentLayout>
+   ```
 
 3. `public/previews/<name>.webp` にスクショを置く（1200×675 / 16:9）
 4. `src/experiments.ts` に 1 エントリ追加（タイトル・プレビュー画像・タグ）。

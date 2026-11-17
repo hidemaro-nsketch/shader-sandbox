@@ -17,9 +17,19 @@ export function ExperimentLayout({ children }: { children: ReactNode }) {
 
 export function Stage({ children }: { children: ReactNode }) {
 	return (
-		<main className="flex min-h-0 min-w-0 flex-1 items-center justify-center p-4 sm:p-8">
+		<main className="relative flex min-h-0 min-w-0 flex-1 items-center justify-center p-4 sm:p-8">
 			{children}
 		</main>
+	);
+}
+
+/** Artwork-only page: the stage plus a floating back link instead of a panel. */
+export function ArtworkStage({ children }: { children: ReactNode }) {
+	return (
+		<Stage>
+			<BackLink className="absolute top-3 left-3 z-10 border border-black bg-white/90 px-2.5 py-1.5 backdrop-blur-sm sm:top-4 sm:left-4" />
+			{children}
+		</Stage>
 	);
 }
 
@@ -67,11 +77,11 @@ export function Panel({ children }: { children: ReactNode }) {
 	);
 }
 
-export function BackLink() {
+export function BackLink({ className = "" }: { className?: string }) {
 	return (
 		<Link
 			to="/"
-			className="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] hover:opacity-50"
+			className={`inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] hover:opacity-50 ${className}`}
 		>
 			<ArrowLeft size={12} />
 			Sandbox
