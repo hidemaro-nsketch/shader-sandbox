@@ -16,6 +16,9 @@ import {
 
 const SEED = 0x3c05;
 
+/** Layers in paint order: background, boxes, top face, blue faces, pipes, locks, wordmark + button. */
+export const STAGE_COUNT = 7;
+
 const A = 24; // half cell width
 const B = 12; // half cell depth
 const C = 15; // voxel height
@@ -34,19 +37,17 @@ const iso = (i: number, j: number, k: number): Pt => ({
 const poly = (pts: Pt[]) =>
 	pts.map((p) => `${round(p.x)},${round(p.y)}`).join(" ");
 
-function useBackground(rng: Rng) {
-	return useMemo(() => {
-		const boxes: { x: number; y: number; w: number; h: number }[] = [];
-		for (let i = 0; i < 34; i++) {
-			boxes.push({
-				x: round(range(rng, -20, 1560)),
-				y: round(range(rng, 0, 920)),
-				w: round(range(rng, 40, 96)),
-				h: round(range(rng, 110, 320)),
-			});
-		}
-		return boxes;
-	}, [rng]);
+function buildBackground(rng: Rng) {
+	const boxes: { x: number; y: number; w: number; h: number }[] = [];
+	for (let i = 0; i < 34; i++) {
+		boxes.push({
+			x: round(range(rng, -20, 1560)),
+			y: round(range(rng, 0, 920)),
+			w: round(range(rng, 40, 96)),
+			h: round(range(rng, 110, 320)),
+		});
+	}
+	return boxes;
 }
 
 /** Hexagonal "nut" on the top face of a voxel. */
@@ -134,46 +135,61 @@ function Lock({ p, scale = 1 }: { p: Pt; scale?: number }) {
 	);
 }
 
-export function AikidoContainer({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
-	const rng = useMemo(() => createRng(SEED), []);
-	const background = useBackground(rng);
-
-	const caps = useMemo(() => {
-		const list: { p: Pt; tone: number }[] = [];
-		for (let i = 0; i < N; i++) {
-			for (let j = 0; j < N; j++) {
-				list.push({
-					p: iso(i + 0.5, j + 0.5, K),
-					tone: rng(),
-				});
-			}
+function buildCaps(rng: Rng) {
+	const list: { p: Pt; tone: number }[] = [];
+	for (let i = 0; i < N; i++) {
+		for (let j = 0; j < N; j++) {
+			list.push({
+				p: iso(i + 0.5, j + 0.5, K),
+				tone: rng(),
+			});
 		}
-		return list;
-	}, [rng]);
+	}
+	return list;
+}
 
-	// Blue voxel faces: +i face on the right, +j face on the left.
-	const faces = useMemo(() => {
-		const list: { pts: string; tone: number }[] = [];
-		for (let k = 0; k < K; k++) {
-			for (let n = 0; n < N; n++) {
-				const right = [
-					iso(N, n, k),
-					iso(N, n + 1, k),
-					iso(N, n + 1, k + 1),
-					iso(N, n, k + 1),
-				];
-				const left = [
-					iso(n, N, k),
-					iso(n + 1, N, k),
-					iso(n + 1, N, k + 1),
-					iso(n, N, k + 1),
-				];
-				list.push({ pts: poly(right), tone: rng() });
-				list.push({ pts: poly(left), tone: rng() });
-			}
+/** Blue voxel faces: +i face on the right, +j face on the left. */
+function buildFaces(rng: Rng) {
+	const list: { pts: string; tone: number }[] = [];
+	for (let k = 0; k < K; k++) {
+		for (let n = 0; n < N; n++) {
+			const right = [
+				iso(N, n, k),
+				iso(N, n + 1, k),
+				iso(N, n + 1, k + 1),
+				iso(N, n, k + 1),
+			];
+			const left = [
+				iso(n, N, k),
+				iso(n + 1, N, k),
+				iso(n + 1, N, k + 1),
+				iso(n, N, k + 1),
+			];
+			list.push({ pts: poly(right), tone: rng() });
+			list.push({ pts: poly(left), tone: rng() });
 		}
-		return list;
-	}, [rng]);
+	}
+	return list;
+}
+
+export function AikidoContainer({
+	svgRef,
+	stage = STAGE_COUNT,
+}: {
+	svgRef?: Ref<SVGSVGElement>;
+	/** Draw only the first `stage` layers (1..STAGE_COUNT); default is the full piece. */
+	stage?: number;
+}) {
+	// All random layers come from one fresh rng, consumed in a fixed order, so
+	// the output never depends on how many times React re-runs the memo.
+	const { background, caps, faces } = useMemo(() => {
+		const rng = createRng(SEED);
+		return {
+			background: buildBackground(rng),
+			caps: buildCaps(rng),
+			faces: buildFaces(rng),
+		};
+	}, []);
 
 	const waistL = iso(0, N, K);
 	const waistB = iso(N, N, K);
@@ -192,77 +208,99 @@ export function AikidoContainer({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 		>
 			<rect width={1600} height={960} fill="#191918" />
 
-			<g stroke="#262625" strokeWidth={1.4} fill="none">
-				{background.map((b) => (
-					<rect
-						key={`${b.x}-${b.y}`}
-						x={b.x}
-						y={b.y}
-						width={b.w}
-						height={b.h}
+			{stage >= 2 && (
+				<g stroke="#262625" strokeWidth={1.4} fill="none">
+					{background.map((b) => (
+						<rect
+							key={`${b.x}-${b.y}`}
+							x={b.x}
+							y={b.y}
+							width={b.w}
+							height={b.h}
+						/>
+					))}
+				</g>
+			)}
+
+			{stage >= 3 && (
+				<>
+					{/* top face */}
+					<g>
+						<polygon
+							points={poly([
+								iso(0, 0, K),
+								iso(N, 0, K),
+								iso(N, N, K),
+								iso(0, N, K),
+							])}
+							fill="#252524"
+						/>
+						{caps.map((c) => (
+							<VoxelCap key={`${c.p.x}-${c.p.y}`} p={c.p} tone={c.tone} />
+						))}
+					</g>
+				</>
+			)}
+
+			{stage >= 4 && (
+				<>
+					{/* blue faces */}
+					<g stroke="#1b46c4" strokeWidth={0.8}>
+						{faces.map((f) => (
+							<polygon
+								key={f.pts}
+								points={f.pts}
+								fill={f.tone > 0.5 ? "#2f63ff" : "#2a58e6"}
+							/>
+						))}
+					</g>
+				</>
+			)}
+
+			{stage >= 5 && (
+				<>
+					{/* yellow pipes along the waist, extended past the corners */}
+					<g stroke={AK.yellow} strokeWidth={2.2} fill="none">
+						<path
+							d={`M${round(extL.x)} ${round(extL.y)}L${round(waistL.x)} ${round(waistL.y)}L${round(waistB.x)} ${round(waistB.y)}L${round(waistR.x)} ${round(waistR.y)}L${round(extR.x)} ${round(extR.y)}`}
+						/>
+					</g>
+					<g fill={AK.yellow}>
+						<circle cx={extL.x} cy={extL.y} r={6} />
+						<circle cx={waistL.x - A * 2.4} cy={waistL.y - B * 2.4} r={4.2} />
+						<circle cx={waistR.x + A * 2.4} cy={waistR.y - B * 2.4} r={4.2} />
+						<circle cx={extR.x} cy={extR.y} r={6} />
+					</g>
+				</>
+			)}
+
+			{stage >= 6 && (
+				<>
+					{/* locks on the blue voxels */}
+					<Lock p={iso(1.6, N, 9.4)} />
+					<Lock p={iso(N, 3.6, 10.2)} />
+					<Lock p={iso(9.2, N, 1.1)} scale={0.86} />
+					<Lock p={iso(N, 9.2, 1.1)} scale={0.86} />
+				</>
+			)}
+
+			{stage >= 7 && (
+				<>
+					{/* wordmark */}
+					<g transform="translate(686 74)">
+						<path d={markPath(58)} fill={AK.paper} />
+					</g>
+
+					{/* button */}
+					<rect x={652} y={862} width={304} height={44} rx={6} fill="#2e2e2d" />
+					<path
+						d="M890 879l5 5-5 5"
+						fill="none"
+						stroke="#dcdad6"
+						strokeWidth={1.6}
 					/>
-				))}
-			</g>
-
-			{/* top face */}
-			<g>
-				<polygon
-					points={poly([
-						iso(0, 0, K),
-						iso(N, 0, K),
-						iso(N, N, K),
-						iso(0, N, K),
-					])}
-					fill="#252524"
-				/>
-				{caps.map((c) => (
-					<VoxelCap key={`${c.p.x}-${c.p.y}`} p={c.p} tone={c.tone} />
-				))}
-			</g>
-
-			{/* blue faces */}
-			<g stroke="#1b46c4" strokeWidth={0.8}>
-				{faces.map((f) => (
-					<polygon
-						key={f.pts}
-						points={f.pts}
-						fill={f.tone > 0.5 ? "#2f63ff" : "#2a58e6"}
-					/>
-				))}
-			</g>
-
-			{/* yellow pipes along the waist, extended past the corners */}
-			<g stroke={AK.yellow} strokeWidth={2.2} fill="none">
-				<path
-					d={`M${round(extL.x)} ${round(extL.y)}L${round(waistL.x)} ${round(waistL.y)}L${round(waistB.x)} ${round(waistB.y)}L${round(waistR.x)} ${round(waistR.y)}L${round(extR.x)} ${round(extR.y)}`}
-				/>
-			</g>
-			<g fill={AK.yellow}>
-				<circle cx={extL.x} cy={extL.y} r={6} />
-				<circle cx={waistL.x - A * 2.4} cy={waistL.y - B * 2.4} r={4.2} />
-				<circle cx={waistR.x + A * 2.4} cy={waistR.y - B * 2.4} r={4.2} />
-				<circle cx={extR.x} cy={extR.y} r={6} />
-			</g>
-
-			{/* locks on the blue voxels */}
-			<Lock p={iso(1.6, N, 9.4)} />
-			<Lock p={iso(N, 3.6, 10.2)} />
-			<Lock p={iso(9.2, N, 1.1)} scale={0.86} />
-			<Lock p={iso(N, 9.2, 1.1)} scale={0.86} />
-
-			{/* wordmark */}
-			<g transform="translate(686 74)">
-				<path d={markPath(58)} fill={AK.paper} />
-			</g>
-
-			{/* button */}
-			<rect x={652} y={862} width={304} height={44} rx={6} fill="#2e2e2d" />
-			<path
-				d="M890 879l5 5-5 5"
-				fill="none"
-				stroke="#dcdad6"
-				strokeWidth={1.6}
-			/>
+				</>
+			)}
 		</svg>
 	);
 }

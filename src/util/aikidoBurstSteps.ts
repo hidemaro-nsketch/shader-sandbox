@@ -1,12 +1,7 @@
-/** One stage of the burst walkthrough; index + 1 is the `stage` passed to AikidoBurst. */
-export type BurstStep = {
-	title: string;
-	note: string;
-	code: string;
-};
+import type { WalkthroughStep } from "./aikidoSteps";
 
 /** Code excerpts mirror src/components/aikido/AikidoBurst.tsx. */
-export const BURST_STEPS: readonly BurstStep[] = [
+export const BURST_STEPS: readonly WalkthroughStep[] = [
 	{
 		title: "背景を塗る",
 		note: "1600×960 の viewBox いっぱいに、ほぼ黒の長方形を 1 枚敷きます。以降の層はすべてこの上に重なります。",

@@ -16,47 +16,50 @@ import {
 
 const SEED = 0x2b87;
 
+/**
+ * Layers in paint order: dark card, bricks, yellow tunnel, violet band, dark
+ * footer, light card + pale rows, capsules + wordmark, sphere, seams + filter
+ * + code strip, callouts.
+ */
+export const STAGE_COUNT = 10;
+
 const CARD_A = { x: 154, y: 135, w: 579, h: 689 };
 const CARD_B = { x: 766, y: 135, w: 678, h: 689 };
 
 /** Dark card: brick wall of code blocks. */
-function useBricks(rng: Rng) {
-	return useMemo(() => {
-		const bricks: { x: number; y: number; w: number }[] = [];
-		const left = CARD_A.x + 6;
-		const top = CARD_A.y + 4;
-		const width = CARD_A.w - 12;
-		const height = CARD_A.h - 8;
-		const rowH = 34;
-		for (let row = 0; row * rowH < height; row++) {
-			const offset = row % 2 === 0 ? -52 : 4;
-			for (let x = offset; x < width; x += 100) {
-				bricks.push({
-					x: round(left + x),
-					y: round(top + row * rowH + 5),
-					w: round(92 + range(rng, -6, 6)),
-				});
-			}
+function buildBricks(rng: Rng) {
+	const bricks: { x: number; y: number; w: number }[] = [];
+	const left = CARD_A.x + 6;
+	const top = CARD_A.y + 4;
+	const width = CARD_A.w - 12;
+	const height = CARD_A.h - 8;
+	const rowH = 34;
+	for (let row = 0; row * rowH < height; row++) {
+		const offset = row % 2 === 0 ? -52 : 4;
+		for (let x = offset; x < width; x += 100) {
+			bricks.push({
+				x: round(left + x),
+				y: round(top + row * rowH + 5),
+				w: round(92 + range(rng, -6, 6)),
+			});
 		}
-		return bricks;
-	}, [rng]);
+	}
+	return bricks;
 }
 
 /** Blue "bug" confetti inside the sphere. */
-function useConfetti(rng: Rng) {
-	return useMemo(() => {
-		const dots: { x: number; y: number; s: number }[] = [];
-		for (let i = 0; i < 190; i++) {
-			const a = rng() * Math.PI * 2;
-			const r = Math.sqrt(rng());
-			dots.push({
-				x: round(1066 + Math.cos(a) * r * 100),
-				y: round(447 + Math.sin(a) * r * 128),
-				s: round(range(rng, 6, 12)),
-			});
-		}
-		return dots;
-	}, [rng]);
+function buildConfetti(rng: Rng) {
+	const dots: { x: number; y: number; s: number }[] = [];
+	for (let i = 0; i < 190; i++) {
+		const a = rng() * Math.PI * 2;
+		const r = Math.sqrt(rng());
+		dots.push({
+			x: round(1066 + Math.cos(a) * r * 100),
+			y: round(447 + Math.sin(a) * r * 128),
+			s: round(range(rng, 6, 12)),
+		});
+	}
+	return dots;
 }
 
 /** Concentric arcs of the dark card: the "code tunnel". */
@@ -119,10 +122,18 @@ function PanelLogo({
 	);
 }
 
-export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
-	const rng = useMemo(() => createRng(SEED), []);
-	const bricks = useBricks(rng);
-	const confetti = useConfetti(rng);
+export function AikidoBanners({
+	svgRef,
+	stage = STAGE_COUNT,
+}: {
+	svgRef?: Ref<SVGSVGElement>;
+	/** Draw only the first `stage` layers (1..STAGE_COUNT); default is the full piece. */
+	stage?: number;
+}) {
+	const { bricks, confetti } = useMemo(() => {
+		const rng = createRng(SEED);
+		return { bricks: buildBricks(rng), confetti: buildConfetti(rng) };
+	}, []);
 	const arcs = useMemo(tunnelArcs, []);
 	const rings = useMemo(reviewArcs, []);
 
@@ -167,143 +178,168 @@ export function AikidoBanners({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 					height={CARD_A.h}
 					fill={AK.night}
 				/>
-				<g fill="none" stroke="#2d2d2d" strokeWidth={1.6}>
-					{bricks.map((b) => (
-						<rect
-							key={`${b.x}-${b.y}`}
-							x={b.x}
-							y={b.y}
-							width={b.w}
-							height={27}
-							rx={13}
-						/>
-					))}
-				</g>
+				{stage >= 2 && (
+					<g fill="none" stroke="#2d2d2d" strokeWidth={1.6}>
+						{bricks.map((b) => (
+							<rect
+								key={`${b.x}-${b.y}`}
+								x={b.x}
+								y={b.y}
+								width={b.w}
+								height={27}
+								rx={13}
+							/>
+						))}
+					</g>
+				)}
 
 				{/* the tunnel of dashed arcs */}
-				<g clipPath={clip("tunnel")}>
-					{arcs.map((arc) => (
-						<path
-							key={arc.d.slice(0, 22)}
-							d={arc.d}
-							fill="none"
-							stroke={AK.yellow}
-							strokeWidth={8}
-							strokeDasharray="100 8"
-							strokeDashoffset={arc.offset}
-						/>
-					))}
-					{arcs.slice(4, 10).map((arc, i) => (
-						<path
-							key={`v${arc.r}`}
-							d={arcSpan(arc.r, 124, 56)}
-							fill="none"
-							stroke={AK.violet}
-							strokeWidth={8}
-							strokeDasharray="100 8"
-							strokeDashoffset={arc.offset + 50 + i * 7}
-						/>
-					))}
-				</g>
+				{stage >= 3 && (
+					<g clipPath={clip("tunnel")}>
+						{arcs.map((arc) => (
+							<path
+								key={arc.d.slice(0, 22)}
+								d={arc.d}
+								fill="none"
+								stroke={AK.yellow}
+								strokeWidth={8}
+								strokeDasharray="100 8"
+								strokeDashoffset={arc.offset}
+							/>
+						))}
+						{stage >= 4 &&
+							arcs
+								.slice(4, 10)
+								.map((arc, i) => (
+									<path
+										key={`v${arc.r}`}
+										d={arcSpan(arc.r, 124, 56)}
+										fill="none"
+										stroke={AK.violet}
+										strokeWidth={8}
+										strokeDasharray="100 8"
+										strokeDashoffset={arc.offset + 50 + i * 7}
+									/>
+								))}
+					</g>
+				)}
 			</g>
 
 			{/* dark card footer */}
-			<PanelLogo x={182} y={732} h={26} color={AK.paper} />
+			{stage >= 5 && <PanelLogo x={182} y={732} h={26} color={AK.paper} />}
 
 			{/* ── light card ───────────────────────────────────────────── */}
-			<g clipPath={clip("light")}>
-				<rect
-					x={CARD_B.x}
-					y={CARD_B.y}
-					width={CARD_B.w}
-					height={CARD_B.h}
-					fill={AK.paper}
-				/>
+			{stage >= 6 && (
+				<g clipPath={clip("light")}>
+					<rect
+						x={CARD_B.x}
+						y={CARD_B.y}
+						width={CARD_B.w}
+						height={CARD_B.h}
+						fill={AK.paper}
+					/>
 
-				{/* pale brick rows */}
-				<g fill="none" stroke="#e8e8e6" strokeDasharray="56 11">
-					{rings.map((ring) => (
-						<path
-							key={ring.d.slice(0, 30)}
-							d={ring.d}
-							strokeWidth={ring.width}
-						/>
-					))}
-				</g>
+					{/* pale brick rows */}
+					<g fill="none" stroke="#e8e8e6" strokeDasharray="56 11">
+						{rings.map((ring) => (
+							<path
+								key={ring.d.slice(0, 30)}
+								d={ring.d}
+								strokeWidth={ring.width}
+							/>
+						))}
+					</g>
 
-				{/* capsule outlines at both edges */}
-				<g fill="none" stroke="#cfcfcd" strokeWidth={1.6}>
-					<ellipse cx={752} cy={420} rx={86} ry={206} />
-					<ellipse cx={746} cy={420} rx={120} ry={232} />
-					<ellipse cx={1462} cy={420} rx={86} ry={206} />
-					<ellipse cx={1468} cy={420} rx={120} ry={232} />
+					{/* capsule outlines at both edges */}
+					{stage >= 7 && (
+						<g fill="none" stroke="#cfcfcd" strokeWidth={1.6}>
+							<ellipse cx={752} cy={420} rx={86} ry={206} />
+							<ellipse cx={746} cy={420} rx={120} ry={232} />
+							<ellipse cx={1462} cy={420} rx={86} ry={206} />
+							<ellipse cx={1468} cy={420} rx={120} ry={232} />
+						</g>
+					)}
 				</g>
-			</g>
+			)}
 
 			{/* aikido wordmark */}
-			<PanelLogo x={1005} y={183} h={32} color={AK.ink} />
+			{stage >= 7 && <PanelLogo x={1005} y={183} h={32} color={AK.ink} />}
 
 			{/* the filtered sphere */}
-			<g>
-				{/* violet capsules above and below */}
-				<rect x={1040} y={291} width={106} height={30} fill={AK.violet} />
-				<rect x={1040} y={573} width={106} height={30} fill={AK.violet} />
+			{stage >= 8 && (
+				<g>
+					{/* violet capsules above and below */}
+					<rect x={1040} y={291} width={106} height={30} fill={AK.violet} />
+					<rect x={1040} y={573} width={106} height={30} fill={AK.violet} />
 
-				<ellipse cx={1055} cy={447} rx={96} ry={130} fill={AK.yellow} />
-				<g clipPath={clip("sphere")}>
-					{confetti.map((d) => (
-						<rect
-							key={`${d.x}-${d.y}`}
-							x={d.x}
-							y={d.y}
-							width={d.s}
-							height={d.s}
-							fill={AK.blue}
-						/>
-					))}
-					{/* beach-ball seams */}
-					<g fill="none" stroke="#e9e9e7" strokeWidth={2}>
-						<path d="M1010 320a120 128 0 0 1 0 258" />
-						<path d="M1052 316a112 131 0 0 1 0 262" />
+					<ellipse cx={1055} cy={447} rx={96} ry={130} fill={AK.yellow} />
+					<g clipPath={clip("sphere")}>
+						{confetti.map((d) => (
+							<rect
+								key={`${d.x}-${d.y}`}
+								x={d.x}
+								y={d.y}
+								width={d.s}
+								height={d.s}
+								fill={AK.blue}
+							/>
+						))}
+						{stage >= 9 && (
+							<>
+								{/* beach-ball seams */}
+								<g fill="none" stroke="#e9e9e7" strokeWidth={2}>
+									<path d="M1010 320a120 128 0 0 1 0 258" />
+									<path d="M1052 316a112 131 0 0 1 0 262" />
+								</g>
+								{/* violet filter over the right third */}
+								<path
+									d="M1100 320a112 127 0 0 1 0 254l40 0 0-254z"
+									fill={AK.violet}
+								/>
+								{/* shipped code strip */}
+								<g clipPath={clip("code")}>
+									<rect
+										x={1160}
+										y={330}
+										width={56}
+										height={234}
+										fill={AK.green}
+									/>
+								</g>
+							</>
+						)}
 					</g>
-					{/* violet filter over the right third */}
-					<path
-						d="M1100 320a112 127 0 0 1 0 254l40 0 0-254z"
-						fill={AK.violet}
+					<ellipse
+						cx={1055}
+						cy={447}
+						rx={96}
+						ry={130}
+						fill="none"
+						stroke="#d2d2d0"
+						strokeWidth={1.6}
 					/>
-					{/* shipped code strip */}
-					<g clipPath={clip("code")}>
-						<rect x={1160} y={330} width={56} height={234} fill={AK.green} />
-					</g>
 				</g>
-				<ellipse
-					cx={1055}
-					cy={447}
-					rx={96}
-					ry={130}
-					fill="none"
-					stroke="#d2d2d0"
-					strokeWidth={1.6}
-				/>
-			</g>
+			)}
 
 			{/* callouts */}
-			<g>
-				<rect x={862} y={316} width={12} height={12} fill={AK.orange} />
-				<path
-					d="M900 336v56h46"
-					fill="none"
-					stroke={AK.ink}
-					strokeWidth={1.6}
-				/>
-				<rect x={1256} y={557} width={12} height={12} fill={AK.orange} />
-				<path
-					d="M1262 553v-38h-58"
-					fill="none"
-					stroke={AK.ink}
-					strokeWidth={1.6}
-				/>
-			</g>
+			{stage >= 10 && (
+				<g>
+					<rect x={862} y={316} width={12} height={12} fill={AK.orange} />
+					<path
+						d="M900 336v56h46"
+						fill="none"
+						stroke={AK.ink}
+						strokeWidth={1.6}
+					/>
+					<rect x={1256} y={557} width={12} height={12} fill={AK.orange} />
+					<path
+						d="M1262 553v-38h-58"
+						fill="none"
+						stroke={AK.ink}
+						strokeWidth={1.6}
+					/>
+				</g>
+			)}
 
 			{/* caption */}
 		</svg>
