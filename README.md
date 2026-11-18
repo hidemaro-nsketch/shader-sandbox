@@ -58,6 +58,7 @@ VERCEL=1 pnpm build   # .vercel/output が生成される
 | `/aikido-reviews` | 層状の丘とハッチ・網点を重ねたコードレビュー用タイポポスター。"Code reviews that fix your code" |
 | `/aikido-pentest` | 扇状に広がる紫とオレンジの攻撃ストロークで「Pentest everything you ship」を組んだカード |
 | `/aikido-burst` | 放射状のバーストの中心に引用カードを置いたブログ用ビジュアル |
+| `/aikido-burst-steps` | `/aikido-burst` が完成するまでを 7 段階で見せ、各段階のコード抜粋と解説を添えたウォークスルー |
 
 ## 構成
 
