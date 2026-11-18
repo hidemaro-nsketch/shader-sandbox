@@ -9,6 +9,9 @@ import { AK, createRng, type Rng, range, round } from "../../util/aikido";
 const SEED = 0x6b11;
 const CENTER = { x: 810, y: 480 };
 
+/** Layers in paint order: background, grain, halo, bars, orange, card, masthead. */
+export const STAGE_COUNT = 7;
+
 type Bar = {
 	x1: number;
 	y1: number;
@@ -45,7 +48,14 @@ function useBurst(rng: Rng) {
 	}, [rng]);
 }
 
-export function AikidoBurst({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
+export function AikidoBurst({
+	svgRef,
+	stage = STAGE_COUNT,
+}: {
+	svgRef?: Ref<SVGSVGElement>;
+	/** Draw only the first `stage` layers (1..STAGE_COUNT); default is the full piece. */
+	stage?: number;
+}) {
 	const rng = useMemo(() => createRng(SEED), []);
 	const bars = useBurst(rng);
 	const ids = "aikido-burst";
@@ -77,39 +87,49 @@ export function AikidoBurst({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 				</pattern>
 			</defs>
 
-			<rect width={1600} height={960} fill="#1d1d1d" />
-			<rect width={1600} height={960} fill={`url(#${ids}-grain)`} />
+			{stage >= 1 && <rect width={1600} height={960} fill="#1d1d1d" />}
+			{stage >= 2 && (
+				<rect width={1600} height={960} fill={`url(#${ids}-grain)`} />
+			)}
 
 			{/* faint halo behind the burst */}
-			<circle
-				cx={CENTER.x}
-				cy={CENTER.y}
-				r={270}
-				fill="none"
-				stroke="#1e1e1d"
-				strokeWidth={2}
-			/>
+			{stage >= 3 && (
+				<circle
+					cx={CENTER.x}
+					cy={CENTER.y}
+					r={270}
+					fill="none"
+					stroke="#1e1e1d"
+					strokeWidth={2}
+				/>
+			)}
 
-			<g strokeLinecap="butt">
-				{bars.map((b) => (
-					<line
-						key={`${b.x2}-${b.y2}`}
-						x1={b.x1}
-						y1={b.y1}
-						x2={b.x2}
-						y2={b.y2}
-						stroke={b.hot ? AK.orange : "#3a3a3a"}
-						strokeWidth={b.width}
-						strokeDasharray="44 7"
-					/>
-				))}
-			</g>
+			{stage >= 4 && (
+				<g strokeLinecap="butt">
+					{bars.map((b) => (
+						<line
+							key={`${b.x2}-${b.y2}`}
+							x1={b.x1}
+							y1={b.y1}
+							x2={b.x2}
+							y2={b.y2}
+							stroke={b.hot && stage >= 5 ? AK.orange : "#3a3a3a"}
+							strokeWidth={b.width}
+							strokeDasharray="44 7"
+						/>
+					))}
+				</g>
+			)}
 
 			{/* card */}
-			<rect x={537} y={345} width={533} height={255} rx={20} fill="#191919" />
+			{stage >= 6 && (
+				<rect x={537} y={345} width={533} height={255} rx={20} fill="#191919" />
+			)}
 
 			{/* masthead */}
-			<rect x={365} y={52} width={212} height={40} rx={8} fill="#242423" />
+			{stage >= 7 && (
+				<rect x={365} y={52} width={212} height={40} rx={8} fill="#242423" />
+			)}
 		</svg>
 	);
 }
