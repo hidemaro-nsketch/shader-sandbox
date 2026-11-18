@@ -21,31 +21,29 @@ type Bar = {
 	width: number;
 };
 
-function useBurst(rng: Rng) {
-	return useMemo(() => {
-		const bars: Bar[] = [];
-		const count = 230;
-		for (let i = 0; i < count; i++) {
-			const deg = (i / count) * 360 + range(rng, -1.0, 1.0);
-			const rad = (deg * Math.PI) / 180;
-			const r0 = range(rng, 130, 300);
-			const len = range(rng, 50, 200);
-			const hot =
-				(deg > 150 && deg < 215) ||
-				(deg > 240 && deg < 272) ||
-				(deg > 296 && deg < 336) ||
-				(deg > 56 && deg < 90);
-			bars.push({
-				x1: round(CENTER.x + Math.sin(rad) * r0),
-				y1: round(CENTER.y - Math.cos(rad) * r0),
-				x2: round(CENTER.x + Math.sin(rad) * (r0 + len)),
-				y2: round(CENTER.y - Math.cos(rad) * (r0 + len)),
-				hot,
-				width: round(range(rng, 7, 11)),
-			});
-		}
-		return bars;
-	}, [rng]);
+function buildBurst(rng: Rng) {
+	const bars: Bar[] = [];
+	const count = 230;
+	for (let i = 0; i < count; i++) {
+		const deg = (i / count) * 360 + range(rng, -1.0, 1.0);
+		const rad = (deg * Math.PI) / 180;
+		const r0 = range(rng, 130, 300);
+		const len = range(rng, 50, 200);
+		const hot =
+			(deg > 150 && deg < 215) ||
+			(deg > 240 && deg < 272) ||
+			(deg > 296 && deg < 336) ||
+			(deg > 56 && deg < 90);
+		bars.push({
+			x1: round(CENTER.x + Math.sin(rad) * r0),
+			y1: round(CENTER.y - Math.cos(rad) * r0),
+			x2: round(CENTER.x + Math.sin(rad) * (r0 + len)),
+			y2: round(CENTER.y - Math.cos(rad) * (r0 + len)),
+			hot,
+			width: round(range(rng, 7, 11)),
+		});
+	}
+	return bars;
 }
 
 export function AikidoBurst({
@@ -56,8 +54,7 @@ export function AikidoBurst({
 	/** Draw only the first `stage` layers (1..STAGE_COUNT); default is the full piece. */
 	stage?: number;
 }) {
-	const rng = useMemo(() => createRng(SEED), []);
-	const bars = useBurst(rng);
+	const bars = useMemo(() => buildBurst(createRng(SEED)), []);
 	const ids = "aikido-burst";
 
 	return (

@@ -59,6 +59,11 @@ VERCEL=1 pnpm build   # .vercel/output が生成される
 | `/aikido-pentest` | 扇状に広がる紫とオレンジの攻撃ストロークで「Pentest everything you ship」を組んだカード |
 | `/aikido-burst` | 放射状のバーストの中心に引用カードを置いたブログ用ビジュアル |
 | `/aikido-burst-steps` | `/aikido-burst` が完成するまでを 7 段階で見せ、各段階のコード抜粋と解説を添えたウォークスルー |
+| `/aikido-hero-steps` | `/aikido-hero` が完成するまでを 8 段階で見せ、各段階のコード抜粋と解説を添えたウォークスルー |
+| `/aikido-banners-steps` | `/aikido-banners` が完成するまでを 10 段階で見せ、各段階のコード抜粋と解説を添えたウォークスルー |
+| `/aikido-container-steps` | `/aikido-container` が完成するまでを 7 段階で見せ、各段階のコード抜粋と解説を添えたウォークスルー |
+| `/aikido-reviews-steps` | `/aikido-reviews` が完成するまでを 8 段階で見せ、各段階のコード抜粋と解説を添えたウォークスルー |
+| `/aikido-pentest-steps` | `/aikido-pentest` が完成するまでを 6 段階で見せ、各段階のコード抜粋と解説を添えたウォークスルー |
 
 ## 構成
 
@@ -73,6 +78,7 @@ src/
     surface-plots.tsx         # サーフェスプロットポスター生成ページ
     wireframe.tsx             # CAD風ワイヤーフレームページ
     aikido-*.tsx              # ブランド系アートワーク6種（パネルなしの絵だけページ）
+    aikido-*-steps.tsx        # 各アートワークが完成するまでを段階で見せるウォークスルーページ（6種）
   components/
     ui/Controls.tsx           # 白黒の共通UIキット（レイアウト・パネル・スライダー・絵だけ用の ArtworkStage 等）
     ShaderCanvas.tsx          # 共通キャンバス（レンダラ初期化・正射影カメラ・戻るリンク）
@@ -81,7 +87,8 @@ src/
     PaperPoster.tsx           # 切り絵ポスターの SVG レンダラ
     SurfacePlotPoster.tsx     # サーフェスプロットポスターの SVG レンダラ
     WireframeTorus.tsx        # CAD風ワイヤーフレームの SVG レンダラ
-    aikido/Aikido*.tsx        # ブランド系アートワークの SVG レンダラ（6種）
+    aikido/Aikido*.tsx        # ブランド系アートワークの SVG レンダラ（6種。stage で途中経過も描ける）
+    aikido/AikidoWalkthrough.tsx # 6種共通のウォークスルー UI（左に途中経過、右に解説とコード）
   util/
     halftone.ts               # ハーフトーンの TSL ノードグラフ
     paperPoster.ts            # ポスターのレイアウト生成（シード RNG）
@@ -90,6 +97,8 @@ src/
     wireframeTorus.ts         # トーラス/シリンダのワイヤー生成と透視投影
     shader.ts                 # TSL の小道具（アスペクト補正 UV など）
     aikido.ts                 # ブランド系アートワークの共通定数・RNG・雲/マークの形
+    aikidoSteps.ts            # ウォークスルーの 1 段階の型（WalkthroughStep）
+    aikido*Steps.ts           # 各アートワークの段階ごとの解説とコード抜粋
     webgpu-polyfill.ts        # WebGPU 非対応環境向けポリフィル（必ず最初に import）
 public/                       # 実験で使う画像などの素材
 ```

@@ -74,12 +74,23 @@ const CLOUDS = [
 	{ x: 1350, y: 268, w: 260, h: 44, lumps: 4, tick: 22 },
 ];
 
-export function AikidoReviews({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
-	const rng: Rng = useMemo(() => createRng(SEED), []);
-	const clouds: Cloud[] = useMemo(
-		() => CLOUDS.map((spec) => cloudShape(rng, { ...spec, lumps: spec.lumps })),
-		[rng],
-	);
+/** Layers in paint order: paper, clouds, grey hill, yellow hill, violet tick, violet band, green hill, logo. */
+export const STAGE_COUNT = 8;
+
+export function AikidoReviews({
+	svgRef,
+	stage = STAGE_COUNT,
+}: {
+	svgRef?: Ref<SVGSVGElement>;
+	/** Draw only the first `stage` layers (1..STAGE_COUNT); default is the full piece. */
+	stage?: number;
+}) {
+	const clouds: Cloud[] = useMemo(() => {
+		const rng: Rng = createRng(SEED);
+		return CLOUDS.map((spec) =>
+			cloudShape(rng, { ...spec, lumps: spec.lumps }),
+		);
+	}, []);
 
 	const ids = "aikido-reviews";
 	const clip = (name: string) => `url(#${ids}-${name})`;
@@ -146,62 +157,84 @@ export function AikidoReviews({ svgRef }: { svgRef?: Ref<SVGSVGElement> }) {
 			<rect width={1600} height={960} fill={AK.paper} />
 
 			{/* clouds */}
-			{clouds.map((c) => (
-				<g key={c.d.slice(0, 24)}>
-					<path d={c.d} fill={AK.paper} stroke={AK.ink} strokeWidth={2} />
-					<g stroke={AK.ink} strokeWidth={1.2}>
-						{c.ticks.map((t) => (
-							<line
-								key={`${t.x1}-${t.y2}`}
-								x1={t.x1}
-								y1={t.y1}
-								x2={t.x2}
-								y2={t.y2}
-							/>
-						))}
+			{stage >= 2 &&
+				clouds.map((c) => (
+					<g key={c.d.slice(0, 24)}>
+						<path d={c.d} fill={AK.paper} stroke={AK.ink} strokeWidth={2} />
+						<g stroke={AK.ink} strokeWidth={1.2}>
+							{c.ticks.map((t) => (
+								<line
+									key={`${t.x1}-${t.y2}`}
+									x1={t.x1}
+									y1={t.y1}
+									x2={t.x2}
+									y2={t.y2}
+								/>
+							))}
+						</g>
 					</g>
-				</g>
-			))}
+				))}
 
 			{/* grey hatched hill */}
-			<g clipPath={clip("grey")}>
-				<rect width={1600} height={960} fill={AK.paper} />
-				<rect width={1600} height={960} fill={`url(#${ids}-hatch)`} />
-			</g>
+			{stage >= 3 && (
+				<g clipPath={clip("grey")}>
+					<rect width={1600} height={960} fill={AK.paper} />
+					<rect width={1600} height={960} fill={`url(#${ids}-hatch)`} />
+				</g>
+			)}
 
 			{/* yellow hill, with a band of orange dots under its crest */}
-			<g clipPath={clip("yellow")}>
-				<rect width={1600} height={960} fill={AK.yellow} />
-				<path d={crestBand(HILLS.yellow, 52)} fill={`url(#${ids}-dots)`} />
-			</g>
+			{stage >= 4 && (
+				<g clipPath={clip("yellow")}>
+					<rect width={1600} height={960} fill={AK.yellow} />
+					<path d={crestBand(HILLS.yellow, 52)} fill={`url(#${ids}-dots)`} />
+				</g>
+			)}
 
 			{/* violet tick on the yellow */}
-			<rect x={342} y={772} width={18} height={92} fill={AK.blue} />
+			{stage >= 5 && (
+				<rect x={342} y={772} width={18} height={92} fill={AK.blue} />
+			)}
 
 			{/* paper band with violet dashes, in front of the yellow */}
-			<path d={hillPath(HILLS.violet)} fill={AK.paper} />
-			<g fill="none" stroke={AK.violet} strokeWidth={9} strokeDasharray="34 22">
-				{[9, 41, 73, 105].map((offset) => (
-					<path key={offset} d={followHill(HILLS.violet, offset)} />
-				))}
-			</g>
+			{stage >= 6 && (
+				<>
+					<path d={hillPath(HILLS.violet)} fill={AK.paper} />
+					<g
+						fill="none"
+						stroke={AK.violet}
+						strokeWidth={9}
+						strokeDasharray="34 22"
+					>
+						{[9, 41, 73, 105].map((offset) => (
+							<path key={offset} d={followHill(HILLS.violet, offset)} />
+						))}
+					</g>
+				</>
+			)}
 
 			{/* green hill with binary + hatch */}
-			<g clipPath={clip("green")}>
-				<rect width={1600} height={960} fill={AK.green} />
-				<rect
-					x={930}
-					width={200}
-					height={960}
-					fill={`url(#${ids}-greenhatch)`}
-				/>
-			</g>
-			<rect x={1113} y={800} width={13} height={160} fill="#e2450f" />
+			{stage >= 7 && (
+				<>
+					<g clipPath={clip("green")}>
+						<rect width={1600} height={960} fill={AK.green} />
+						<rect
+							x={930}
+							width={200}
+							height={960}
+							fill={`url(#${ids}-greenhatch)`}
+						/>
+					</g>
+					<rect x={1113} y={800} width={13} height={160} fill="#e2450f" />
+				</>
+			)}
 
 			{/* logo */}
-			<g transform="translate(704 274)">
-				<path d={markPath(45)} fill={AK.ink} />
-			</g>
+			{stage >= 8 && (
+				<g transform="translate(704 274)">
+					<path d={markPath(45)} fill={AK.ink} />
+				</g>
+			)}
 		</svg>
 	);
 }
